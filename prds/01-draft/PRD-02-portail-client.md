@@ -2,7 +2,7 @@
 
 **Statut :** Draft
 **Priorité :** P1
-**Story points :** 5
+**Story points :** 8
 **Dépendances :** PRD-00 (repo GitHub), PRD-01 (`pipeline_stage` en enum strict)
 **Bloque :** Rien (livrable indépendant)
 
@@ -19,30 +19,40 @@ Un portail web statique, accessible via un lien unique partagé au client, qui a
 ## Périmètre
 
 ### In scope
-- Page HTML/CSS/JS vanilla, hébergée sur GitHub Pages (gratuit)
+- App Next.js avec export statique (`output: 'export'`), hébergeable sur GitHub Pages ou en local (`npx serve out/`)
 - Paramétrage par query params : `?mission=recXXX&key=patXXX&base=appXXX`
 - Affichage du funnel (12 stages, count par stage depuis Airtable API)
 - Liste des candidats présentés (stage >= "Presented") : nom, titre, date de présentation
 - Timeline de l'activité récente (derniers changements de stage)
-- Mode démo avec données fictives si aucun param fourni
-- Design system cohérent avec les PRDs existants (dark theme, DM Sans, JetBrains Mono)
+- Mode démo avec données fictives si aucun param fourni (base de démo `appwgQqKsHf4Z1la7`)
+- Design avec shadcn/ui — composants Card, Badge, Separator, Skeleton (loading state)
 
 ### Out of scope
 - Authentification (le lien = l'accès — acceptable pour MVP)
 - Affichage des CR ou des transcriptions (données confidentielles)
 - Fonctionnalités interactives (filtres, export)
-- Version mobile optimisée (responsive basique suffit)
+- Server Components / API routes Next.js (incompatible avec static export)
 
 ## Décisions d'architecture
 
-**Pourquoi HTML statique et pas React ?**
-Zéro build step, déployable directement sur GitHub Pages, maintenable sans toolchain JS. Le portail n'a pas besoin de state management complexe.
+**Pourquoi Next.js + static export et pas HTML vanilla ?**
+Choix client — shadcn/ui nécessite React. L'export statique (`next build` → dossier `out/`) génère un site 100% HTML/JS/CSS sans serveur. Compatible GitHub Pages et consultable en local avec `npx serve out/`.
+
+**Hébergement local :**
+```bash
+cd src/portal
+npm run build   # génère out/
+npx serve out   # accessible sur http://localhost:3000
+```
+
+**Hébergement GitHub Pages :**
+Activer GitHub Pages sur le dossier `out/` via une GitHub Action ou manuellement. L'app étant 100% statique, aucune contrainte côté hébergeur.
 
 **Pourquoi l'API key en query param ?**
-Pour le MVP avec données fictives, c'est acceptable. En production, il faudrait un proxy backend ou une Airtable Personal Access Token en lecture seule sur une base dédiée.
+Pour le MVP avec données fictives, c'est acceptable. La PAT Airtable utilisée est en lecture seule sur la base de démo uniquement.
 
-**Pourquoi GitHub Pages et pas Vercel/Netlify ?**
-Coût zéro, pas de compte supplémentaire, déployé depuis le même repo que le reste du projet.
+**Pourquoi pas Vercel/Netlify ?**
+Coût zéro, pas de compte supplémentaire, déployé depuis le même repo.
 
 ## Maquette des sections
 
@@ -50,41 +60,51 @@ Coût zéro, pas de compte supplémentaire, déployé depuis le même repo que l
 [ SONNAR ]  Mission : VP Sales — Fintech         ● Live
 
 ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
-│ 32          │  │ 12          │  │ 4           │
+│ 7           │  │ 3           │  │ 2           │
 │ Candidats   │  │ Qualifiés   │  │ Présentés   │
-│ identifiés  │  │             │  │             │
+│ actifs      │  │             │  │             │
 └─────────────┘  └─────────────┘  └─────────────┘
 
-── Pipeline candidats ──────────────────────────────
-
-Sourced(8) → Contacted(6) → Responded(5) → Call Done(4)
-→ Qualified(4) → Presented(4) → E1(2) → E2(1) → ...
+── Pipeline ────────────────────────────────────────
+Sourced · Contacted · Responded · Call Done
+Qualified · Presented · E1 · E2 · E3 · Offer
 
 ── Candidats présentés ─────────────────────────────
-
 Julien F.  Director of Sales EMEA · Stripe      14 mars
-Camille N. VP Sales · Spendesk                  17 mars
+Camille N. VP Sales · Spendesk                  18 mars
 
 ── Activité récente ────────────────────────────────
-
 19 mars  Antoine R. passé en Qualified
 17 mars  Camille N. passée en Presented
 ```
 
+## Edge cases critiques
+
+| Cas | Comportement attendu |
+|-----|----------------------|
+| Aucun param `?mission=` | Mode démo avec données fictives de la base de démo |
+| API Airtable timeout / erreur | Afficher un état d'erreur explicite (pas d'écran blanc) |
+| Mission sans candidats présentés | Afficher la section vide avec message "Aucun candidat présenté" |
+| Pipeline Stage non reconnu | Ignorer le record, ne pas planter |
+| Build local sans Node.js | Documenter dans setup-guide.md |
+
 ## Critères d'acceptance
 
-- [ ] La page se charge et affiche les données Airtable en < 2s
-- [ ] Le funnel affiche le bon count par stage
-- [ ] Les candidats présentés sont filtrés correctement (stage ≥ Presented)
-- [ ] Le mode démo fonctionne sans paramètres (données fictives intégrées)
-- [ ] La page est déployée sur GitHub Pages et accessible via URL publique
-- [ ] Le design est cohérent avec le design system Sonnar (couleurs, fonts)
+- [ ] `npm run build` dans `src/portal/` génère un dossier `out/` sans erreur
+- [ ] `npx serve out` affiche le portail en local sur http://localhost:3000
+- [ ] Le funnel affiche le bon count par stage depuis Airtable
+- [ ] Les candidats présentés sont filtrés correctement (stage ∈ {Presented, E1, E2, E3, Offer, Accepted})
+- [ ] Le mode démo fonctionne sans paramètres (données de la base `appwgQqKsHf4Z1la7`)
+- [ ] Les états de chargement (Skeleton) sont affichés pendant le fetch
+- [ ] Déployable sur GitHub Pages via `out/` (testé manuellement)
 
-## Story points : 5
+## Story points : 8
 
 | Tâche | Points |
 |-------|--------|
-| HTML/CSS structure + design system | 1 |
-| JS : fetch Airtable API + render funnel | 2 |
-| JS : candidats présentés + timeline | 1 |
-| Mode démo + déploiement GitHub Pages | 1 |
+| Setup Next.js + shadcn/ui + config static export | 1 |
+| Composants UI : KPI cards, funnel bar, candidats, timeline | 2 |
+| Fetch Airtable API + parsing pipeline stages | 2 |
+| Mode démo + gestion erreurs + loading states | 1 |
+| Build statique + déploiement GitHub Pages | 1 |
+| Documentation setup-guide.md | 1 |

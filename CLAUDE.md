@@ -10,7 +10,7 @@ Instructions de travail pour Claude Code sur ce projet. À lire en entier avant 
 - **Module B** — CR d'entretien : 3-4h → 15 min par entretien
 - **Module A** — Report client hebdo : 6-7h → 10 min par semaine
 
-Stack : Airtable (données) · n8n (orchestration) · Claude API (génération) · GitHub Pages (portail client) · Gmail API (envoi)
+Stack : Airtable (données) · n8n (orchestration) · Claude API (génération) · Next.js + shadcn/ui (portail client) · GitHub Pages (hébergement) · Gmail API (envoi)
 
 Contexte d'usage : **projet d'entretien**. Chaque artefact produit doit être présentable et explicable en entretien.
 
@@ -91,7 +91,7 @@ Numérotation croissante dans l'ordre de création. Pas de renommage une fois cr
 │   ├── prompts/            ← prompts Claude en .md (system + user séparés)
 │   ├── n8n/                ← workflows exportés en .json + README d'import
 │   ├── airtable/           ← schema.md + seed-data.json + setup-script.js
-│   └── portal/             ← HTML/CSS/JS vanilla (GitHub Pages)
+│   └── portal/             ← Next.js + shadcn/ui (static export → GitHub Pages)
 │
 └── docs/
     ├── architecture.md     ← flux de données, décisions d'archi
@@ -105,14 +105,14 @@ Numérotation croissante dans l'ordre de création. Pas de renommage une fois cr
 
 | PRD | Titre | Priorité | Points | Statut |
 |-----|-------|----------|--------|--------|
-| PRD-00 | Setup Projet & Infrastructure | P0 | 3 | Draft |
-| PRD-01 | Data Model & Normalisation Airtable | P0 | 5 | Draft |
-| PRD-02 | Portail Client (GitHub Pages) | P1 | 5 | Draft |
+| PRD-00 | Setup Projet & Infrastructure | P0 | 5 | **Complete** |
+| PRD-01 | Data Model & Normalisation Airtable | P0 | 5 | **Complete** |
+| PRD-02 | Portail Client (GitHub Pages) | P1 | 8 | Draft |
 | PRD-03 | Module B — CR d'entretien IA | P1 | 8 | Draft |
 | PRD-04 | Module A — Report hebdo automatisé | P1 | 8 | Draft |
 
-**Chemin critique :** PRD-00 → PRD-01 → PRD-03 → PRD-04
-**Parallélisable :** PRD-02 avec PRD-03 (dès PRD-01 terminé)
+**Chemin critique :** ~~PRD-00 → PRD-01~~ → PRD-03 → PRD-04
+**Parallélisable :** PRD-02 avec PRD-03 (dès maintenant)
 
 ---
 
@@ -120,11 +120,17 @@ Numérotation croissante dans l'ordre de création. Pas de renommage une fois cr
 
 ### Général
 - **Langue** : code en anglais (variables, fonctions, commentaires), PRDs et docs en français
-- **Pas de TypeScript** pour le MVP — JS vanilla uniquement (portail client + scripts)
-- **Pas de framework** côté portail client — HTML/CSS/JS vanilla, zéro build step
 - **Pas de commentaires évidents** — commenter uniquement ce qui n'est pas auto-explicite
 
-### JavaScript (scripts Airtable, portal/app.js)
+### Portail client (src/portal/) — Next.js + TypeScript
+- Next.js avec `output: 'export'` (static export) — pas de Server Components, pas d'API routes
+- shadcn/ui pour tous les composants UI — ne pas réinventer les composants de base
+- TypeScript strict — typer les réponses Airtable API explicitement
+- Fetch Airtable côté client uniquement (`useEffect` + `useState`)
+- `async/await` uniquement, pas de `.then()` chaîné
+
+### Scripts Node.js (src/airtable/, scripts/)
+- JS vanilla (pas TypeScript) — scripts one-shot, pas besoin de typage
 - `const` par défaut, `let` si réassignation nécessaire, jamais `var`
 - Fonctions nommées, pas de fonctions fléchées anonymes imbriquées
 - Erreurs explicites : `throw new Error('message clair')` — pas de `console.error` silencieux
@@ -163,7 +169,8 @@ Numérotation croissante dans l'ordre de création. Pas de renommage une fois cr
 
 - **Ne pas créer de fichier d'implémentation sans PRD en `03-in-progress`**
 - **Ne pas modifier un PRD en `04-complete`** — créer un nouveau PRD si besoin
-- **Ne pas utiliser React, Vue, ou un bundler** pour le portail client
+- **Ne pas utiliser de Server Components Next.js** — le portail est un static export, tout le fetch se fait côté client
+- **Ne pas utiliser Vue ou Angular** — stack portail = Next.js + shadcn/ui uniquement
 - **Ne pas envoyer d'email directement** depuis n8n — toujours créer un draft Gmail pour validation consultant
 - **Ne pas merger un PR** si les critères d'acceptance du PRD correspondant ne sont pas tous cochés
 - **Ne pas ajouter de dépendances npm** sans les justifier dans le PRD concerné
