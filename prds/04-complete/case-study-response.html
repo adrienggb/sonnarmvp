@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonnar — Réponse Étude de Cas Technique</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090F;
+  --surface: #0E1219;
+  --surface2: #151B26;
+  --surface3: #1C2433;
+  --border: #252F40;
+  --border-light: #2E3A4E;
+  --accent: #4F8EF7;
+  --accent-glow: rgba(79,142,247,0.10);
+  --accent-soft: #6BA1F8;
+  --green: #34D399;
+  --green-dim: rgba(52,211,153,0.12);
+  --amber: #FBBF24;
+  --amber-dim: rgba(251,191,36,0.10);
+  --red: #F87171;
+  --red-dim: rgba(248,113,113,0.10);
+  --purple: #A78BFA;
+  --purple-dim: rgba(167,139,250,0.10);
+  --cyan: #22D3EE;
+  --text: #E8EDF5;
+  --text2: #A0ADC2;
+  --text3: #6B7A94;
+  --text4: #3D4D66;
+  --font: 'DM Sans', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
+
+/* NAV */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(7,9,15,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1060px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; gap: 4px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-brand {
+  font-size: 13px; font-weight: 800; color: var(--accent);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 14px 16px 14px 0; margin-right: 12px;
+  border-right: 1px solid var(--border); white-space: nowrap;
+  font-family: var(--mono);
+}
+.nav-btn {
+  background: none; border: none; color: var(--text3);
+  font-family: var(--font); font-size: 12.5px; font-weight: 600;
+  padding: 14px 13px; cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all .15s;
+}
+.nav-btn:hover { color: var(--text2); }
+.nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* LAYOUT */
+.main { max-width: 1060px; margin: 0 auto; padding: 32px 24px 80px; }
+.section { display: none; }
+.section.visible { display: block; animation: fadeUp .3s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* COMPONENTS */
+.page-title {
+  font-size: 28px; font-weight: 800; color: var(--text);
+  margin-bottom: 6px; line-height: 1.2;
+}
+.page-sub {
+  font-size: 14px; color: var(--text3); margin-bottom: 32px;
+  max-width: 640px;
+}
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--accent);
+  font-family: var(--mono); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+h2 {
+  font-size: 20px; font-weight: 800; color: var(--text);
+  margin-bottom: 8px; line-height: 1.3;
+}
+h3 {
+  font-size: 16px; font-weight: 700; color: var(--text);
+  margin-bottom: 6px;
+}
+p { color: var(--text2); font-size: 14px; margin-bottom: 12px; }
+.highlight { color: var(--text); font-weight: 600; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 20px;
+  margin-bottom: 16px;
+}
+.card-header {
+  display: flex; align-items: flex-start; gap: 14px;
+  margin-bottom: 14px;
+}
+.card-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width: 720px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* KPI CARDS */
+.kpi-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px;
+}
+.kpi-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+.kpi-value { font-size: 26px; font-weight: 800; font-family: var(--mono); }
+.kpi-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  text-align: left; padding: 10px 12px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.8px;
+  text-transform: uppercase; color: var(--text3);
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 10px 12px; border-bottom: 1px solid var(--border);
+  color: var(--text2); vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+
+/* BADGES */
+.badge {
+  display: inline-block; padding: 2px 9px; border-radius: 5px;
+  font-size: 11px; font-weight: 700; font-family: var(--mono);
+}
+.badge-red { background: var(--red-dim); color: var(--red); }
+.badge-amber { background: var(--amber-dim); color: var(--amber); }
+.badge-green { background: var(--green-dim); color: var(--green); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); }
+.badge-blue { background: var(--accent-glow); color: var(--accent); }
+
+/* TIMELINE */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before {
+  content: ''; position: absolute; left: 8px; top: 6px;
+  bottom: 6px; width: 2px; background: var(--border);
+}
+.tl-item { position: relative; margin-bottom: 24px; }
+.tl-dot {
+  position: absolute; left: -24px; top: 4px;
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid; background: var(--bg);
+}
+.tl-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.tl-period { font-size: 11px; font-weight: 600; font-family: var(--mono); margin-bottom: 6px; }
+.tl-desc { font-size: 13px; color: var(--text2); line-height: 1.55; }
+.tl-deliverable {
+  margin-top: 10px; padding: 10px 14px;
+  background: var(--surface2); border-radius: 8px;
+  border-left: 3px solid; font-size: 12px;
+}
+
+/* RISK BARS */
+.risk-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 10px;
+  margin-bottom: 10px; border-left: 3px solid;
+}
+.risk-level { font-size: 10px; font-weight: 800; font-family: var(--mono); letter-spacing: 1px; text-transform: uppercase; min-width: 70px; }
+.risk-text { font-size: 13px; color: var(--text2); flex: 1; }
+
+/* CALLOUT */
+.callout {
+  padding: 18px 20px; border-radius: 10px;
+  border: 1px solid; margin-bottom: 20px;
+}
+.callout-title { font-size: 13px; font-weight: 800; margin-bottom: 6px; }
+.callout-body { font-size: 13px; line-height: 1.6; }
+
+/* FLOW DIAGRAM */
+.flow-row {
+  display: flex; align-items: center; gap: 0; margin: 20px 0;
+  overflow-x: auto; padding-bottom: 8px;
+}
+.flow-node {
+  padding: 12px 18px; border-radius: 10px; text-align: center;
+  min-width: 140px; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--surface);
+}
+.flow-node-title { font-size: 11px; font-weight: 800; font-family: var(--mono); letter-spacing: 0.5px; margin-bottom: 3px; }
+.flow-node-sub { font-size: 10.5px; color: var(--text3); }
+.flow-arrow {
+  width: 32px; height: 2px; background: var(--border);
+  flex-shrink: 0; position: relative;
+}
+.flow-arrow::after {
+  content: '›'; position: absolute; right: -4px; top: -9px;
+  color: var(--text3); font-size: 16px;
+}
+
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-24 { margin-bottom: 24px; }
+.mb-32 { margin-bottom: 32px; }
+.mt-24 { margin-top: 24px; }
+.mt-32 { margin-top: 32px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">SONNAR</div>
+    <button class="nav-btn active" data-tab="audit">Audit</button>
+    <button class="nav-btn" data-tab="risks">Risques</button>
+    <button class="nav-btn" data-tab="vision">Vision & Objectifs</button>
+    <button class="nav-btn" data-tab="kpi">KR & KPIs</button>
+    <button class="nav-btn" data-tab="q1">Q1 — 90 jours</button>
+    <button class="nav-btn" data-tab="q2">Q2 — KPIs</button>
+    <button class="nav-btn" data-tab="q3">Q3 — Budget</button>
+  </div>
+</nav>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 1: AUDIT -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="audit" class="section visible">
+
+<div class="page-title">Audit de l'existant</div>
+<div class="page-sub">État des lieux croisé : shadow audit terrain, analyse RevOps, et échanges avec les consultants et fondateurs.</div>
+
+<!-- KPI snapshot -->
+<div class="grid-3 mb-32">
+  <div class="kpi-box">
+    <div class="kpi-label">Chiffre d'affaires</div>
+    <div class="kpi-value" style="color:var(--text)">3 M€</div>
+    <div class="kpi-sub">12 consultants · ~250 k€/consultant</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-label">Missions / consultant</div>
+    <div class="kpi-value" style="color:var(--amber)">4</div>
+    <div class="kpi-sub">Cible : 6 missions (+50%)</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-label">Panier moyen</div>
+    <div class="kpi-value" style="color:var(--amber)">30 k€</div>
+    <div class="kpi-sub">Cible : 40 k€ (+33%)</div>
+  </div>
+</div>
+
+<!-- Leviers de croissance -->
+<div class="section-label">Modèle de croissance 60%</div>
+<div class="callout mb-32" style="border-color:var(--accent); background:var(--accent-glow);">
+  <div class="callout-title" style="color:var(--accent);">3 M€ → 4,8 M€ : la mécanique</div>
+  <div class="callout-body" style="color:var(--text2);">
+    <strong style="color:var(--text);">Recrutement :</strong> 12 → 17 consultants (+42% de capacité) · 
+    <strong style="color:var(--text);">Staffing :</strong> 4 → 6 missions/consultant (+50% d'utilisation) · 
+    <strong style="color:var(--text);">Sales :</strong> 30 k€ → 40 k€ panier moyen (+33%)<br><br>
+    <strong style="color:var(--amber);">⚠ Point de vigilance :</strong> Ces 3 leviers sont <strong style="color:var(--text);">multiplicatifs, pas additifs.</strong> Si un seul flanche, l'ensemble du modèle est compromis. 
+    Vérification : 17 consultants × 6 missions × 40 k€ = <strong style="color:var(--green);">4,08 M€.</strong> Il manque ~700 k€ pour atteindre 4,8 M€ — ce qui implique soit des missions à plus de 40 k€ de moyenne, soit un staffing au-delà de 6, soit les deux.
+  </div>
+</div>
+
+<!-- Stack Audit -->
+<div class="section-label">Stack actuelle — Diagnostic</div>
+<div class="card mb-16">
+<table>
+<thead><tr><th>Outil</th><th>Fonctions</th><th>Santé</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Airtable</strong></td>
+  <td>ATS · ERP · SIRH · Staffing · Analytics · Performance & Primes</td>
+  <td><span class="badge badge-red">CRITIQUE</span></td>
+  <td>6 fonctions dans un seul outil. Single point of failure. Aucun contrôle d'accès entre données RH, financières et opérationnelles. Ne tiendra pas à 17 consultants × 6 missions.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">HubSpot</strong></td>
+  <td>CRM</td>
+  <td><span class="badge badge-amber">INCONNU</span></td>
+  <td>Pipeline sales. Connexion Airtable (staffing) probablement inexistante → risque de vendre ce qu'on ne peut pas livrer.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Hiresweet</strong></td>
+  <td>ATS (migration en cours)</td>
+  <td><span class="badge badge-amber">TRANSITION</span></td>
+  <td>Migration depuis Airtable en cours. Risque : perte de candidats pendant le cutover.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Notion</strong></td>
+  <td>Knowledge base · Interface client</td>
+  <td><span class="badge badge-amber">FRAGILE</span></td>
+  <td>Double usage interne/externe = confusion d'accès. Les consultants copient-collent les CR candidats manuellement dans Notion ou dans l'ATS client (TeamTailor, Lever…). Triple saisie.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">ChatGPT / Gemini</strong></td>
+  <td>CR calls · Mapping · Due diligence · Reformatting</td>
+  <td><span class="badge badge-red">NON GOUVERNÉ</span></td>
+  <td>Aucun audit trail. Pas de prompt library partagée. Chacun utilise l'IA différemment. L'output n'est pas versionné ni validé.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">LinkedIn Recruiter</strong></td>
+  <td>Sourcing candidats</td>
+  <td><span class="badge badge-amber">MANUEL</span></td>
+  <td>Aucune intégration ATS. Chaque candidat est créé manuellement dans Airtable (nom, email, tel, diplôme, URL LinkedIn).</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Crunchbase / CF News</strong></td>
+  <td>Recherche entreprises</td>
+  <td><span class="badge badge-amber">SILOTÉE</span></td>
+  <td>L'intelligence marché générée n'est pas capitalisée dans le CRM. Elle s'évapore après chaque call.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- Funnel Audit from Shadow -->
+<div class="section-label mt-32">Funnel réel — Résultat du shadow audit</div>
+<p class="mb-16">Le shadow audit (observation terrain de consultants sur des missions réelles) a révélé un cycle en <strong style="color:var(--text);">8 étapes</strong>, dont la quasi-totalité est manuelle :</p>
+
+<div class="flow-row mb-24">
+  <div class="flow-node" style="border-color:var(--accent);">
+    <div class="flow-node-title" style="color:var(--accent);">1. CRÉATION MISSION</div>
+    <div class="flow-node-sub">Airtable</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node">
+    <div class="flow-node-title">2. SOURCING INTERNE</div>
+    <div class="flow-node-sub">Airtable DB</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--red);">
+    <div class="flow-node-title" style="color:var(--red);">3. SOURCING EXTERNE</div>
+    <div class="flow-node-sub">LinkedIn → saisie manuelle</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node">
+    <div class="flow-node-title">4. QUALIFICATION</div>
+    <div class="flow-node-sub">Call + formulaire</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--red);">
+    <div class="flow-node-title" style="color:var(--red);">5. PARTAGE CLIENT</div>
+    <div class="flow-node-sub">Copy-paste → Notion/ATS client</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node">
+    <div class="flow-node-title">6. ENTRETIENS</div>
+    <div class="flow-node-sub">E1 → E2 → E3</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node">
+    <div class="flow-node-title">7. OFFRE</div>
+    <div class="flow-node-sub">Négociation</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--green);">
+    <div class="flow-node-title" style="color:var(--green);">8. PLACEMENT</div>
+    <div class="flow-node-sub">Suivi perf. manuel</div>
+  </div>
+</div>
+
+<div class="callout mb-24" style="border-color:var(--red); background:var(--red-dim);">
+  <div class="callout-title" style="color:var(--red);">Constat principal</div>
+  <div class="callout-body" style="color:var(--text2);">
+    Sonnar a une <strong style="color:var(--text);">réflexion data avancée</strong> (scoring par persona, benchmarks, évaluation multi-critères) mais une <strong style="color:var(--text);">couche d'exécution 100% manuelle.</strong> Chaque consultant ou mission supplémentaire multiplie l'overhead linéairement. Le reporting est en retard (screenshots hebdomadaires envoyés par email). Les métriques du funnel sont auto-déclarées, pas dérivées du système.
+  </div>
+</div>
+
+<!-- Ce qui marche vs ne scale pas -->
+<div class="grid-2 mb-16">
+  <div class="card">
+    <h3 style="color:var(--green); margin-bottom:12px;">✓ Ce qui fonctionne</h3>
+    <p>Modèle de données candidat riche (historique, aspirations, compétences scorées)</p>
+    <p>Benchmarking par persona — cadre de diagnostic pour les consultants</p>
+    <p>Système de touch points pour le nurturing long terme</p>
+    <p>Critères d'évaluation personnalisables par mission</p>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--red); margin-bottom:12px;">✗ Ce qui ne scale pas</h3>
+    <p>Création candidats manuelle (sourcing externe = la majorité)</p>
+    <p>Performance tracking auto-déclaré, pas system-derived</p>
+    <p>Triple saisie : Airtable → Notion → ATS client</p>
+    <p>Aucun layer d'automatisation entre sourcing, outreach et ATS</p>
+    <p>Reporting statique et en retard (screenshots hebdo)</p>
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 2: RISQUES -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="risks" class="section">
+
+<div class="page-title">Identification des risques</div>
+<div class="page-sub">Synthèse croisée des 3 analyses : audit terrain, diagnostic RevOps, et retours consultants. Classés par impact sur l'objectif de croissance.</div>
+
+<div class="section-label">Risques critiques — Bloquants pour la croissance</div>
+
+<div class="risk-bar" style="border-left-color:var(--red);">
+  <div class="risk-level" style="color:var(--red);">CRITIQUE</div>
+  <div class="risk-text"><strong style="color:var(--text);">Airtable : single point of failure.</strong> 6 fonctions critiques dans un outil non conçu pour ça. À 17 consultants × 6 missions (102 missions actives), les limites de performance, d'accès et de fiabilité seront atteintes. Une panne = paralysie totale (staffing, facturation, recrutement).</div>
+</div>
+
+<div class="risk-bar" style="border-left-color:var(--red);">
+  <div class="risk-level" style="color:var(--red);">CRITIQUE</div>
+  <div class="risk-text"><strong style="color:var(--text);">Déconnexion Sales ↔ Delivery.</strong> Le pipeline vit dans HubSpot, la capacité consultants dans Airtable. Aucun sync. Risque : vendre des missions qu'on ne peut pas staffer. À 40 k€/mission avec des profils seniors, un retard de staffing = churn client + NPS en chute.</div>
+</div>
+
+<div class="risk-bar" style="border-left-color:var(--red);">
+  <div class="risk-level" style="color:var(--red);">CRITIQUE</div>
+  <div class="risk-text"><strong style="color:var(--text);">Dépendance fondateurs pour le business development.</strong> Le réseau personnel des fondateurs génère probablement >70% du pipeline. Ce réseau ne scale pas ×1,6. Sans motion de vente reproductible, le pipeline se tarit entre M6 et M9.</div>
+</div>
+
+<div class="section-label mt-32">Risques élevés — Freins à la scalabilité</div>
+
+<div class="risk-bar" style="border-left-color:var(--amber);">
+  <div class="risk-level" style="color:var(--amber);">ÉLEVÉ</div>
+  <div class="risk-text"><strong style="color:var(--text);">Pas de définition claire du deal à 40 k€.</strong> C'est quoi un deal à 40 k€ ? Plus de consultants ? Plus long ? Plus premium ? Chaque scénario implique une motion de vente, un ICP et une capacité delivery différents. Sans cette réponse, on ne peut pas construire le playbook ni le capacity model.</div>
+</div>
+
+<div class="risk-bar" style="border-left-color:var(--amber);">
+  <div class="risk-level" style="color:var(--amber);">ÉLEVÉ</div>
+  <div class="risk-text"><strong style="color:var(--text);">Overhead consultant linéaire.</strong> Le shadow audit montre que chaque mission supplémentaire ajoute un overhead 100% manuel (sourcing, qualification, reporting, partage client). Passer de 4 à 6 missions/consultant sans automatisation = burnout ou baisse de qualité.</div>
+</div>
+
+<div class="risk-bar" style="border-left-color:var(--amber);">
+  <div class="risk-level" style="color:var(--amber);">ÉLEVÉ</div>
+  <div class="risk-text"><strong style="color:var(--text);">Workflows IA non gouvernés.</strong> ChatGPT/Gemini utilisés par tous, différemment, sans prompts standardisés, sans validation, sans audit trail. Ça marche à 12 car les fondateurs transmettent les standards implicitement. À 17 avec 5 nouveaux, les erreurs s'accumulent silencieusement.</div>
+</div>
+
+<div class="section-label mt-32">Risques modérés — À adresser en Year 1</div>
+
+<div class="risk-bar" style="border-left-color:var(--purple);">
+  <div class="risk-level" style="color:var(--purple);">MODÉRÉ</div>
+  <div class="risk-text"><strong style="color:var(--text);">Pas de BI layer.</strong> Analytics dans Airtable. Pas de forecasting possible. Les reports sont manuels, en retard, et reconstruits from scratch à chaque fois.</div>
+</div>
+
+<div class="risk-bar" style="border-left-color:var(--purple);">
+  <div class="risk-level" style="color:var(--purple);">MODÉRÉ</div>
+  <div class="risk-text"><strong style="color:var(--text);">Risque légal/RH sur Airtable.</strong> Même base contient : évaluations de performance, données financières/primes, et affectations de staffing. Aucun contrôle d'accès granulaire. À 17 personnes, exposition juridique réelle.</div>
+</div>
+
+<div class="risk-bar" style="border-left-color:var(--purple);">
+  <div class="risk-level" style="color:var(--purple);">MODÉRÉ</div>
+  <div class="risk-text"><strong style="color:var(--text);">Migration Hiresweet en cours.</strong> Transition ATS = fenêtre de risque pour le pipeline candidats. Besoin d'un plan de cutover clair pour éviter la perte de données.</div>
+</div>
+
+<!-- Validated vs Unvalidated -->
+<div class="section-label mt-32">Validation des risques</div>
+<div class="grid-2">
+  <div class="card">
+    <h3 style="color:var(--green); margin-bottom:12px;">✓ Risques validés (haute confiance)</h3>
+    <p><strong style="color:var(--text);">Airtable SPOF</strong> — Structurel, confirmé par audit terrain : 6 fonctions, 102 missions cibles.</p>
+    <p><strong style="color:var(--text);">Pas de playbook sales</strong> — Aucun stage défini, pas de critères de qualification, motion founder-dependent.</p>
+    <p><strong style="color:var(--text);">Funnel 100% manuel</strong> — Confirmé par shadow audit : chaque étape implique du copy-paste humain.</p>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--amber); margin-bottom:12px;">⚠ Risques à valider (besoin de data)</h3>
+    <p><strong style="color:var(--text);">Disconnect Sales↔Delivery</strong> — Mesurer : jours entre close et start mission. Si >14j sur >20% des deals, c'est confirmé.</p>
+    <p><strong style="color:var(--text);">Saturation réseau fondateurs</strong> — Mesurer : % des deals Closed-Won provenant du réseau vs outbound/inbound.</p>
+    <p><strong style="color:var(--text);">Ambiguïté deal 40 k€</strong> — Segmenter les deals 12 mois : taille × nb consultants × durée × séniorité.</p>
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 3: VISION & OBJECTIVES -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="vision" class="section">
+
+<div class="page-title">Vision Sonnar & Objectifs stratégiques</div>
+<div class="page-sub">Traduction de l'ambition de croissance en objectifs opérationnels actionnables.</div>
+
+<!-- Vision statement -->
+<div class="callout mb-32" style="border-color:var(--accent); background:linear-gradient(135deg, var(--accent-glow), rgba(34,211,153,0.04));">
+  <div class="callout-title" style="color:var(--accent);">Vision à 12 mois</div>
+  <div class="callout-body" style="color:var(--text2);">
+    Transformer Sonnar d'un cabinet artisanal performant en une <strong style="color:var(--text);">machine de recrutement tech-enabled</strong> capable de servir 17 consultants à 6 missions chacun, avec des outils et processus qui rendent chaque mission plus rapide, plus prévisible et plus rentable — sans sacrifier la qualité relationnelle qui fait la différence Sonnar.<br><br>
+    <strong style="color:var(--text);">Principes directeurs :</strong> Acheter ce qui existe (CRM, ATS), automatiser ce qui fait mal (sourcing, reporting, data entry), construire de l'IA uniquement là où elle multiplie le temps consultant.
+  </div>
+</div>
+
+<div class="section-label">5 objectifs stratégiques</div>
+
+<!-- OBJ 1 -->
+<div class="card mb-16">
+  <div class="card-header">
+    <div class="card-icon" style="background:var(--accent-glow); color:var(--accent);">🏗️</div>
+    <div>
+      <h3>O1 — Construire le socle opérationnel</h3>
+      <p style="margin:0; font-size:12px; color:var(--text3);">Prérequis à tout le reste. Pas de scaling sans données fiables.</p>
+    </div>
+  </div>
+  <p>Remplacer Airtable comme SPOF par des outils spécialisés interconnectés. Créer une source unique de vérité pour le pipeline, la capacité, et la performance. Rendre les métriques system-derived (pas auto-déclarées).</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <span class="badge badge-blue">CRM/ATS migration</span>
+    <span class="badge badge-blue">Sync Sales↔Delivery</span>
+    <span class="badge badge-blue">Dashboard temps réel</span>
+    <span class="badge badge-blue">Source attribution</span>
+  </div>
+</div>
+
+<!-- OBJ 2 -->
+<div class="card mb-16">
+  <div class="card-header">
+    <div class="card-icon" style="background:var(--green-dim); color:var(--green);">⚡</div>
+    <div>
+      <h3>O2 — Rendre le consultant 50% plus efficace</h3>
+      <p style="margin:0; font-size:12px; color:var(--text3);">Levier staffing : 4 → 6 missions sans burnout.</p>
+    </div>
+  </div>
+  <p>Automatiser les tâches à faible valeur (saisie candidat, reporting, partage client) et déployer des outils IA ciblés (sourcing agent, brief generation, outreach personnalisé) pour que le temps consultant se concentre sur le relationnel et la qualification.</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <span class="badge badge-green">AI sourcing agent</span>
+    <span class="badge badge-green">Brief candidat auto</span>
+    <span class="badge badge-green">Client reporting live</span>
+    <span class="badge badge-green">Outreach personnalisé</span>
+  </div>
+</div>
+
+<!-- OBJ 3 -->
+<div class="card mb-16">
+  <div class="card-header">
+    <div class="card-icon" style="background:var(--amber-dim); color:var(--amber);">📈</div>
+    <div>
+      <h3>O3 — Systématiser le business development</h3>
+      <p style="margin:0; font-size:12px; color:var(--text3);">Levier sales : 30 k€ → 40 k€ + désaturer le réseau fondateurs.</p>
+    </div>
+  </div>
+  <p>Définir le deal à 40 k€, créer un playbook de vente reproductible, productiser les workflows de recherche IA (prompts, scoring, templates), et construire un pipeline non-dépendant des fondateurs.</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <span class="badge badge-amber">Playbook sales</span>
+    <span class="badge badge-amber">ICP 40 k€ défini</span>
+    <span class="badge badge-amber">Prompt library</span>
+    <span class="badge badge-amber">Scoring entreprises</span>
+  </div>
+</div>
+
+<!-- OBJ 4 -->
+<div class="card mb-16">
+  <div class="card-header">
+    <div class="card-icon" style="background:var(--purple-dim); color:var(--purple);">🎯</div>
+    <div>
+      <h3>O4 — Transformer l'expérience client</h3>
+      <p style="margin:0; font-size:12px; color:var(--text3);">Levier NPS + rétention + panier moyen.</p>
+    </div>
+  </div>
+  <p>Passer du reporting par screenshots/email à une visibilité live du pipeline pour le client. Standardiser les livrables (briefs candidats, progress reports). Positionner Sonnar comme partenaire talent stratégique, pas simple fournisseur de CV.</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <span class="badge badge-purple">Visibilité client live</span>
+    <span class="badge badge-purple">Briefs standardisés</span>
+    <span class="badge badge-purple">NPS systématisé</span>
+  </div>
+</div>
+
+<!-- OBJ 5 -->
+<div class="card mb-16">
+  <div class="card-header">
+    <div class="card-icon" style="background:rgba(34,211,238,0.10); color:var(--cyan);">🚀</div>
+    <div>
+      <h3>O5 — Recruter et intégrer les 5 nouveaux consultants</h3>
+      <p style="margin:0; font-size:12px; color:var(--text3);">Levier recrutement : 12 → 17.</p>
+    </div>
+  </div>
+  <p>Finaliser la migration Hiresweet, structurer l'onboarding (playbooks, accès outils, mentor), et s'assurer que les nouveaux sont productifs en <8 semaines grâce aux process et outils mis en place.</p>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <span class="badge" style="background:rgba(34,211,238,0.10); color:var(--cyan);">Migration Hiresweet</span>
+    <span class="badge" style="background:rgba(34,211,238,0.10); color:var(--cyan);">Onboarding structuré</span>
+    <span class="badge" style="background:rgba(34,211,238,0.10); color:var(--cyan);">Time-to-productivity</span>
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 4: KR & KPI -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="kpi" class="section">
+
+<div class="page-title">Key Results & KPIs</div>
+<div class="page-sub">Framework de mesure en 4 tiers, du board-level au diagnostic opérationnel.</div>
+
+<!-- TIER 1 -->
+<div class="section-label">Tier 1 — North Star · Revue mensuelle avec les fondateurs</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>KPI</th><th>Baseline</th><th>Cible M6</th><th>Cible M12</th><th>Fréquence</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Revenue run rate mensuel</strong></td>
+  <td>250 k€/mois</td>
+  <td>330 k€/mois</td>
+  <td>400 k€/mois</td>
+  <td>Mensuel</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Panier moyen (deal size)</strong></td>
+  <td>30 k€</td>
+  <td>35 k€</td>
+  <td>40 k€</td>
+  <td>Mensuel</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Nb deals Closed-Won / trimestre</strong></td>
+  <td>~25</td>
+  <td>~28</td>
+  <td>~30</td>
+  <td>Mensuel</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Nb consultants actifs</strong></td>
+  <td>12</td>
+  <td>15</td>
+  <td>17</td>
+  <td>Mensuel</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- TIER 2 -->
+<div class="section-label">Tier 2 — Efficacité Sales · Revue hebdomadaire</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>KPI</th><th>Baseline</th><th>Cible Y1</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Pipeline coverage</strong></td>
+  <td>❓ Inconnu</td>
+  <td>3-4× le target trimestriel</td>
+  <td>Early warning system. Sous 3×, on n'atteint pas le target revenue.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Win rate</strong></td>
+  <td>❓ Inconnu</td>
+  <td>25-35%</td>
+  <td>Sous 20% = qualification cassée. Au-dessus de 40% = sous-pricing.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Cycle de vente (jours)</strong></td>
+  <td>❓ (estimé 60-90j)</td>
+  <td>&lt;90j (30k€) · &lt;120j (40k€)</td>
+  <td>Plus le cycle est long, moins le revenue est prévisible.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Lead source mix</strong></td>
+  <td>❓ (estimé >70% réseau)</td>
+  <td>&lt;50% Fondateurs/Referral</td>
+  <td>Si >70% founder-dependent → pipeline se tarit au scaling.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- TIER 3 -->
+<div class="section-label">Tier 3 — Delivery & Capacité · Revue mensuelle</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>KPI</th><th>Baseline</th><th>Cible Y1</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Missions / consultant</strong></td>
+  <td>4</td>
+  <td>5-6</td>
+  <td>Cœur du levier staffing. Ne pas pousser à 6 d'un coup → burnout.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Jours close → start mission</strong></td>
+  <td>❓ Inconnu</td>
+  <td>&lt;14 jours</td>
+  <td>Au-delà de 21j = problème de capacité. Client impatient, revenue retardé.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Mission NPS</strong></td>
+  <td>❓ Inconnu</td>
+  <td>&gt;50</td>
+  <td>À 6 missions/consultant, le risque qualité augmente. NPS = garde-fou.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Heures par mission</strong></td>
+  <td>~120-150h (estimé)</td>
+  <td>70-90h</td>
+  <td>Réduit par automatisation sourcing + reporting + partage client.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Taux de réponse outreach</strong></td>
+  <td>~15% (estimé)</td>
+  <td>22-25%</td>
+  <td>Amélioration via outreach IA personnalisé.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- TIER 4 -->
+<div class="section-label">Tier 4 — Santé systèmes · Revue trimestrielle</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>KPI</th><th>Cible</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Data quality score</strong></td>
+  <td>>90% des deals avec tous les champs requis</td>
+  <td>Si la data est sale, le forecasting est fiction.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Forecast accuracy</strong></td>
+  <td>±10% (forecast vs actual / trimestre)</td>
+  <td>Mesure si les hypothèses pipeline + win rate tiennent.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Satisfaction consultants (outils & process)</strong></td>
+  <td>+20 pts vs baseline (survey)</td>
+  <td>Les consultants doivent sentir que les outils les aident, pas les ralentissent.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- KEY RESULTS par Objectif -->
+<div class="section-label">Key Results par objectif</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--accent); margin-bottom:12px;">O1 — Socle opérationnel</h3>
+  <table>
+  <thead><tr><th>KR</th><th>Cible</th><th>Deadline</th></tr></thead>
+  <tbody>
+    <tr><td>100% des deals trackés dans le CRM avec stage, valeur, date close</td><td>100%</td><td>Q2</td></tr>
+    <tr><td>100% des métriques mission auto-dérivées (zéro self-reported)</td><td>100%</td><td>Q2</td></tr>
+    <tr><td>Dashboard live : pipeline, conversion, ACV, revenue/consultant, time-to-fill</td><td>Opérationnel</td><td>Q2</td></tr>
+    <tr><td>100% des candidats tagués avec source channel</td><td>100%</td><td>Q1</td></tr>
+  </tbody>
+  </table>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--green); margin-bottom:12px;">O2 — Efficacité consultant</h3>
+  <table>
+  <thead><tr><th>KR</th><th>Cible</th><th>Deadline</th></tr></thead>
+  <tbody>
+    <tr><td>Heures par mission réduites de 30-40%</td><td>70-90h (vs 120-150h)</td><td>M6</td></tr>
+    <tr><td>AI sourcing agent opérationnel (longlist auto en 2-3h vs 2-3 jours)</td><td>Déployé</td><td>M5</td></tr>
+    <tr><td>Briefs candidats auto-générés en <15 min</td><td>Déployé</td><td>M5</td></tr>
+    <tr><td>Partage client automatisé (zéro triple saisie)</td><td>100%</td><td>Q3</td></tr>
+  </tbody>
+  </table>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--amber); margin-bottom:12px;">O3 — Business development systématisé</h3>
+  <table>
+  <thead><tr><th>KR</th><th>Cible</th><th>Deadline</th></tr></thead>
+  <tbody>
+    <tr><td>Deal 40 k€ défini (ICP, motion, capacity model)</td><td>Décision prise</td><td>Semaine 3</td></tr>
+    <tr><td>Playbook sales utilisable par un non-fondateur</td><td>1 deal piloté par non-fondateur</td><td>M2</td></tr>
+    <tr><td>Prompt library + scoring framework déployés</td><td>Opérationnel</td><td>M2</td></tr>
+    <tr><td>Part du pipeline hors réseau fondateurs</td><td>>30% (vs ~15-20% estimé)</td><td>M12</td></tr>
+  </tbody>
+  </table>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 5: Q1 - 90 JOURS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="q1" class="section">
+
+<div class="page-title">Q1 — Comment j'organise mes 3 premiers mois</div>
+<div class="page-sub">Approche pragmatique : comprendre avant de construire, stabiliser avant d'innover, prouver le ROI avant de scaler.</div>
+
+<div class="callout mb-32" style="border-color:var(--green); background:var(--green-dim);">
+  <div class="callout-title" style="color:var(--green);">Principe fondateur</div>
+  <div class="callout-body" style="color:var(--text2);">
+    <strong style="color:var(--text);">Ne pas construire ce qu'on peut acheter. Automatiser ce qui fait le plus mal. Déployer l'IA uniquement là où elle multiplie le temps consultant.</strong><br>
+    L'objectif des 90 premiers jours n'est pas de transformer Sonnar. C'est de prouver que l'approche tech-enabled fonctionne, de montrer un ROI mesurable, et de gagner la légitimité pour aller plus loin.
+  </div>
+</div>
+
+<div class="timeline">
+
+  <!-- MOIS 1 -->
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:var(--accent);"></div>
+    <div class="tl-period" style="color:var(--accent);">MOIS 1 — ÉCOUTER, MESURER, STABILISER</div>
+    <div class="tl-title">Semaines 1-2 : Shadow & Data Sprint</div>
+    <div class="tl-desc">
+      <strong style="color:var(--text);">Shadow 3-5 consultants</strong> sur un cycle mission complet. Observer, chronométrer, documenter chaque étape. Ne pas proposer de solutions — juste comprendre.<br><br>
+      <strong style="color:var(--text);">Sprint data :</strong> Extraire les 3 jeux de données critiques :
+      HubSpot (12 mois de pipeline : deals open + closed, stages, valeurs, sources) ·
+      Airtable (affectations consultants, dates missions, utilisation) ·
+      Finance (P&L, ventilation des coûts).<br><br>
+      <strong style="color:var(--text);">Calculer les 9 KPIs baseline</strong> (win rate, deal size, cycle, pipeline coverage, utilisation, close-to-start lag, NPS, lead source mix, referral coefficient).
+    </div>
+    <div class="tl-deliverable" style="border-color:var(--accent); color:var(--text2);">
+      <strong style="color:var(--accent);">Livrable S2 :</strong> Dashboard 1-page avec les 9 métriques + tendances 12 mois + process map avec temps par étape.
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:var(--red);"></div>
+    <div class="tl-title">Semaines 2-3 : Résoudre l'ambiguïté du deal 40 k€</div>
+    <div class="tl-desc">
+      <strong style="color:var(--red);">Décision stratégique la plus urgente.</strong> Tout le reste en dépend.<br><br>
+      Analyser les deals 12 mois : segmenter par taille (20-30 k€ / 30-40 k€ / 40 k€+), croiser avec nb consultants, durée, séniorité, taille client.<br><br>
+      <strong style="color:var(--text);">3 scénarios à trancher :</strong><br>
+      A) <strong>Scope élargi</strong> (multi-consultants) — change la motion de vente + le capacity model<br>
+      B) <strong>Engagements plus longs</strong> — <span style="color:var(--red);">contradictoire avec l'objectif 4→6 missions</span><br>
+      C) <strong>Positionnement premium</strong> (même scope, tarif +33%) — change l'ICP et le messaging<br><br>
+      <strong style="color:var(--text);">Ma conviction</strong> (à confirmer avec data) : le scénario C (premium) est le plus cohérent avec le levier staffing. Il n'impacte pas le nombre de missions/consultant et repose sur une montée en gamme du positionnement.
+    </div>
+    <div class="tl-deliverable" style="border-color:var(--red); color:var(--text2);">
+      <strong style="color:var(--red);">Livrable S3 :</strong> Décision prise et documentée avec Cyrille & Thibaut. Scénario retenu → alimente playbook, ICP, capacity model.
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:var(--amber);"></div>
+    <div class="tl-title">Semaines 3-4 : Sync Sales ↔ Delivery (le quick win critique)</div>
+    <div class="tl-desc">
+      <strong style="color:var(--text);">Corriger le risque #2 immédiatement :</strong><br><br>
+      1. Créer une <strong>vue capacité consultants</strong> visible depuis HubSpot (même une vue Airtable partagée suffit : Nom · Mission actuelle · Date fin · Prochain dispo)<br>
+      2. Ajouter un <strong>champ requis dans HubSpot</strong> au stage "Négociation" : « Capacité delivery confirmée par [nom] ». Gate obligatoire avant commit.<br>
+      3. Mesurer le baseline : combien de deals des 6 derniers mois ont eu un start retardé >14j ?
+    </div>
+    <div class="tl-deliverable" style="border-color:var(--amber); color:var(--text2);">
+      <strong style="color:var(--amber);">Livrable S4 :</strong> Dashboard capacité live + gate HubSpot configuré + baseline close-to-start mesuré.
+    </div>
+  </div>
+
+  <!-- MOIS 2 -->
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:var(--green);"></div>
+    <div class="tl-period" style="color:var(--green);">MOIS 2 — DOCUMENTER, PRODUCTISER, CONNECTER</div>
+    <div class="tl-title">Semaines 5-6 : Playbook sales</div>
+    <div class="tl-desc">
+      <strong style="color:var(--text);">Objectif : un non-fondateur peut closer un deal.</strong><br><br>
+      1. Observer/enregistrer 3-5 cycles de vente (ou analyser les transcripts ChatGPT existants)<br>
+      2. Extraire : questions discovery, checklist qualification, objection handling, séquence close<br>
+      3. Créer un playbook 2 pages avec stages HubSpot formalisés :<br>
+      <span style="font-family:var(--mono); font-size:12px; color:var(--accent);">Discovery → Qualification → Proposal → Negotiation → Closed-Won/Lost</span><br>
+      4. Piloter : un consultant non-fondateur run un deal complet avec le playbook
+    </div>
+    <div class="tl-deliverable" style="border-color:var(--green); color:var(--text2);">
+      <strong style="color:var(--green);">Livrable S6 :</strong> Playbook + stages HubSpot configurés + 1 deal piloté par non-fondateur.
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:var(--green);"></div>
+    <div class="tl-title">Semaines 7-8 : Productiser les workflows IA</div>
+    <div class="tl-desc">
+      <strong style="color:var(--text);">Passer de "chacun utilise ChatGPT à sa façon" à un système reproductible.</strong><br><br>
+      1. Shadow le meilleur consultant BD : capturer ses prompts, ses sources, ses critères<br>
+      2. Créer une <strong>prompt library</strong> (overview entreprise · fit assessment · brief candidat · CR d'entretien)<br>
+      3. Construire un <strong>scoring framework entreprises</strong> (taille + secteur + signaux croissance = score priorité)<br>
+      4. Piloter l'automatisation : n8n/Make pour nourrir HubSpot avec le research structuré
+    </div>
+    <div class="tl-deliverable" style="border-color:var(--green); color:var(--text2);">
+      <strong style="color:var(--green);">Livrable S8 :</strong> Prompt library + scoring + pipeline d'enrichissement automatisé. 1-2 consultants formés.
+    </div>
+  </div>
+
+  <!-- MOIS 3 -->
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:var(--purple);"></div>
+    <div class="tl-period" style="color:var(--purple);">MOIS 3 — RECRUTER, DÉCIDER, PLANIFIER</div>
+    <div class="tl-title">Semaines 9-10 : Migration Hiresweet + lancement recrutement</div>
+    <div class="tl-desc">
+      Finaliser le cutover ATS Airtable → Hiresweet (migration candidats actifs, vérification zéro perte).<br>
+      Lancer le recrutement des 5 consultants avec un onboarding structuré (playbooks, accès outils, mentor dédié).
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:var(--purple);"></div>
+    <div class="tl-title">Semaines 10-11 : Décision Sales-led vs Marketing-led</div>
+    <div class="tl-desc">
+      Avec les données lead source du Mois 1 :<br><br>
+      <strong style="color:var(--text);">Si >70% founder/referral →</strong> Rester sales-led. Pas de marketing. Donner le playbook + workflows IA aux consultants pour qu'ils prospectent plus efficacement.<br>
+      <strong style="color:var(--text);">Si 40-60% sales-sourced →</strong> Motion reproductible existante. Doubler dessus (outils intent data, sequences).<br>
+      <strong style="color:var(--text);">Si >30% inbound →</strong> Traction marketing existante. Investir dans un fractional content/demand gen à partir de M6.<br><br>
+      <strong style="color:var(--amber);">Ma conviction :</strong> Chez Sonnar, ce sont les consultants qui trouvent leurs candidats ET développent le business. La bonne approche est donc de les rendre plus efficaces avec les bons outils plutôt que de créer une fonction BD/marketing séparée — du moins en Year 1.
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:var(--purple);"></div>
+    <div class="tl-title">Semaine 12 : Bilan 90 jours + plan Year 1</div>
+    <div class="tl-desc">
+      Consolidation : rétrospective 90 jours avec données et résultats mesurés. Présentation aux fondateurs : KPIs Year 1 verrouillés + budget finalisé + roadmap M4-M12.
+    </div>
+    <div class="tl-deliverable" style="border-color:var(--purple); color:var(--text2);">
+      <strong style="color:var(--purple);">Livrable S12 :</strong> Rétrospective 90j + roadmap Year 1 data-driven + budget approuvé.
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 6: Q2 - KPIs Year 1 -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="q2" class="section">
+
+<div class="page-title">Q2 — Quels KPIs suivre en Year 1</div>
+<div class="page-sub">4 tiers de KPIs, chacun avec sa fréquence et son audience. L'idée : ne pas noyer l'équipe sous 30 métriques, mais avoir les bons signaux au bon moment.</div>
+
+<div class="callout mb-32" style="border-color:var(--accent); background:var(--accent-glow);">
+  <div class="callout-title" style="color:var(--accent);">Philosophie de priorisation</div>
+  <div class="callout-body" style="color:var(--text2);">
+    <strong style="color:var(--text);">Tier 1</strong> diagnostique si on va dans la bonne direction (revenue, deal size, volume).<br>
+    <strong style="color:var(--text);">Tier 2</strong> prédit si on va atteindre les targets Tier 1 (pipeline, win rate, cycle).<br>
+    <strong style="color:var(--text);">Tier 3</strong> vérifie qu'on peut livrer ce qu'on vend (utilisation, NPS, lag).<br>
+    <strong style="color:var(--text);">Tier 4</strong> s'assure que la machine elle-même fonctionne (data quality, forecast accuracy).<br><br>
+    Quand un KPI Tier 1 dérape → on drill dans le Tier 2 pour diagnostiquer. Quand Tier 2 dérape → on regarde Tier 3. Tier 4 est un health check trimestriel.
+  </div>
+</div>
+
+<!-- Priority pyramid -->
+<div class="grid-2 mb-32">
+  <div class="card" style="border-color:var(--red); border-width:2px;">
+    <h3 style="color:var(--red); margin-bottom:8px;">🔴 KPI #1 à tracker dès la semaine 1</h3>
+    <p><strong style="color:var(--text); font-size:18px;">Pipeline coverage (3-4×)</strong></p>
+    <p>Si on n'a pas 3× le target trimestriel en pipeline ouvert, on n'atteindra pas les objectifs revenue. C'est le signal d'alerte le plus précoce et le plus actionnable.</p>
+  </div>
+  <div class="card" style="border-color:var(--amber); border-width:2px;">
+    <h3 style="color:var(--amber); margin-bottom:8px;">🟡 Décision #1 à prendre en semaine 3</h3>
+    <p><strong style="color:var(--text); font-size:18px;">Définition du deal 40 k€</strong></p>
+    <p>Tout le reste — playbook, ICP, capacity model, KPIs cibles — dépend de cette réponse. On ne peut pas mesurer le progrès vers un objectif qu'on n'a pas défini.</p>
+  </div>
+</div>
+
+<!-- TIER 1 -->
+<div class="section-label">Tier 1 — North Star · Revue mensuelle fondateurs</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>KPI</th><th>Baseline</th><th>Cible M6</th><th>Cible M12</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Revenue run rate mensuel</strong></td>
+  <td>250 k€/mois</td>
+  <td>330 k€/mois</td>
+  <td>400 k€/mois</td>
+  <td>North Star. Tout le reste est un leading indicator de celui-ci.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Panier moyen (deal size)</strong></td>
+  <td>30 k€</td>
+  <td>35 k€</td>
+  <td>40 k€</td>
+  <td>Le modèle de croissance assume 40 k€. Si ça ne bouge pas à M6, la stratégie est cassée.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Nb deals Closed-Won / trimestre</strong></td>
+  <td>~25</td>
+  <td>~28</td>
+  <td>~30</td>
+  <td>Volume ET deal size. S'assurer qu'on ne fait pas juste monter les prix sur moins de deals.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Nb consultants actifs</strong></td>
+  <td>12</td>
+  <td>15</td>
+  <td>17</td>
+  <td>Capacité de delivery. Sans les 5 recrutements, le modèle ne tient pas.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- TIER 2 -->
+<div class="section-label">Tier 2 — Efficacité Sales · Revue hebdomadaire</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>KPI</th><th>Baseline</th><th>Cible Y1</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Pipeline coverage</strong></td>
+  <td>❓ Inconnu</td>
+  <td>3-4× le target trimestriel</td>
+  <td>Early warning #1. Sous 3×, on n'atteint pas le revenue. Signal d'alerte le plus précoce.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Win rate</strong></td>
+  <td>❓ Inconnu</td>
+  <td>25-35%</td>
+  <td>Sous 20% = qualification cassée. Au-dessus de 40% = sous-pricing ou ICP trop restreint.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Cycle de vente (jours)</strong></td>
+  <td>❓ (estimé 60-90j)</td>
+  <td>&lt;90j (30k€) · &lt;120j (40k€)</td>
+  <td>Plus le cycle est long, moins le revenue est prévisible. Tracker par segment de deal size.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Lead source mix</strong></td>
+  <td>❓ (estimé >70% réseau)</td>
+  <td>&lt;50% Fondateurs/Referral</td>
+  <td>Mesure la dépendance au réseau. Si >70% à M6, on a un problème de scalabilité pipeline.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Referral coefficient</strong></td>
+  <td>❓ Inconnu</td>
+  <td>>30%</td>
+  <td>(Nouveaux deals referral) ÷ (Total clients). Si <30%, le referral engine ne suffit pas pour 60% growth.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- TIER 3 -->
+<div class="section-label">Tier 3 — Delivery & Capacité · Revue mensuelle</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>KPI</th><th>Baseline</th><th>Cible Y1</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Missions / consultant</strong></td>
+  <td>4</td>
+  <td>5-6</td>
+  <td>Cœur du levier staffing. Ne pas pousser à 6 d'un coup → burnout. Monter graduellement.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Taux d'utilisation consultant</strong></td>
+  <td>67% (4/6)</td>
+  <td>85-90%</td>
+  <td>Ne pas viser 100% = burnout. 85-90% = optimal avec marge pour le BD et le nurturing.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Jours close → start mission</strong></td>
+  <td>❓ Inconnu</td>
+  <td>&lt;14 jours</td>
+  <td>Au-delà de 21j = problème de capacité. Client impatient, revenue recognition retardée.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Mission NPS</strong></td>
+  <td>❓ Inconnu</td>
+  <td>&gt;50</td>
+  <td>Garde-fou qualité. À 6 missions/consultant, le risque de dégradation augmente.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Heures par mission</strong></td>
+  <td>~120-150h (estimé)</td>
+  <td>70-90h</td>
+  <td>Mesure directe de l'impact des automatisations. -40% = le proof point pour scaler.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Taux de réponse outreach</strong></td>
+  <td>~15% (estimé)</td>
+  <td>22-25%</td>
+  <td>Amélioration via outreach IA personnalisé. Mesure la qualité du sourcing, pas juste le volume.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Time-to-fill (jours)</strong></td>
+  <td>❓ Inconnu</td>
+  <td>&lt;75 jours</td>
+  <td>Durée totale mission creation → placement. Impact direct sur le throughput et la satisfaction client.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- TIER 4 -->
+<div class="section-label">Tier 4 — Santé systèmes · Revue trimestrielle</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>KPI</th><th>Cible</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Data quality score</strong></td>
+  <td>>90% des deals avec tous les champs requis (source, stage, close date, deal size, consultant assigné)</td>
+  <td>Si la data est sale, le forecasting est fiction. Base de tout le reste.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Forecast accuracy</strong></td>
+  <td>±10% (forecast vs actual / trimestre)</td>
+  <td>Valide si les hypothèses pipeline + win rate sont correctes. Variance >20% = on navigue à l'aveugle.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Satisfaction consultants (outils & process)</strong></td>
+  <td>+20 pts vs baseline survey</td>
+  <td>Les consultants doivent sentir que les outils les aident, pas les ralentissent. Mesure l'adoption réelle.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Taux d'adoption des workflows IA</strong></td>
+  <td>>80% des consultants utilisent la prompt library</td>
+  <td>Un outil non adopté = un investissement gaspillé. Mesure si on change vraiment les habitudes.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Nb de fonctions encore dans Airtable</strong></td>
+  <td>≤2 (vs 6 aujourd'hui)</td>
+  <td>Mesure le progrès de dérisquage du SPOF. Cible : ne garder que staffing + une fonction résiduelle.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- Review cadence -->
+<div class="section-label">Cadence de revue recommandée</div>
+<div class="card mb-16">
+<table>
+<thead><tr><th>Revue</th><th>Fréquence</th><th>Durée</th><th>Audience</th><th>KPIs couverts</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Board / Fondateurs</strong></td>
+  <td>Mensuel</td>
+  <td>30 min</td>
+  <td>Cyrille, Thibaut, Ops</td>
+  <td>Revenue run rate · Deal size · Nb deals · Nb consultants</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Sales Ops</strong></td>
+  <td>Hebdo</td>
+  <td>30 min</td>
+  <td>Fondateurs + senior consultants</td>
+  <td>Pipeline coverage · Win rate · Cycle · Lead source mix</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Delivery Health</strong></td>
+  <td>Mensuel</td>
+  <td>30 min</td>
+  <td>Ops + team leads</td>
+  <td>Utilisation · Close-to-start lag · Mission NPS · Heures/mission</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Systems Audit</strong></td>
+  <td>Trimestriel</td>
+  <td>1h</td>
+  <td>Ops</td>
+  <td>Data quality · Forecast accuracy · Satisfaction consultants</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout mt-24" style="border-color:var(--green); background:var(--green-dim);">
+  <div class="callout-title" style="color:var(--green);">Spécificité Sonnar à intégrer</div>
+  <div class="callout-body" style="color:var(--text2);">
+    Chez Sonnar, les consultants portent à la fois le delivery (trouver les candidats) et une partie du BD (développer les relations clients). Les KPIs doivent refléter cette double casquette. Le "win rate" et le "pipeline coverage" ne sont pas uniquement des métriques sales — ils mesurent aussi l'efficacité des consultants comme développeurs business. C'est pour ça que le levier #1 est de les rendre plus efficaces (O2), pas de leur ajouter une équipe sales parallèle.
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SECTION 7: Q3 - BUDGET -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="q3" class="section">
+
+<div class="page-title">Q3 — Budget Year 1</div>
+<div class="page-sub">Investissement pour supporter une croissance de 60% — structuré par catégorie avec phasing trimestriel.</div>
+
+<!-- Budget philosophy -->
+<div class="callout mb-32" style="border-color:var(--accent); background:var(--accent-glow);">
+  <div class="callout-title" style="color:var(--accent);">Philosophie budgétaire</div>
+  <div class="callout-body" style="color:var(--text2);">
+    On investit dans la <strong style="color:var(--text);">capacité à scaler</strong>, pas dans la maintenance. Le budget doit permettre : (1) un Founding Ops à temps plein, (2) une stack connectée et fiable, (3) des outils IA ciblés pour multiplier l'efficacité consultant, (4) une marge de manœuvre pour tester. On ne dépense pas en BDR, en marketing lourd, ni en BI enterprise — on n'en est pas là.
+  </div>
+</div>
+
+<!-- Total -->
+<div class="grid-2 mb-32">
+  <div class="kpi-box" style="border-color:var(--accent); border-width:2px;">
+    <div class="kpi-label">Budget Year 1 recommandé</div>
+    <div class="kpi-value" style="color:var(--accent);">130 – 160 k€</div>
+    <div class="kpi-sub">Soit 7-8% du CA cible (4,8 M€) · ROI estimé 4-8×</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-label">Revenue uplift estimé</div>
+    <div class="kpi-value" style="color:var(--green);">560 k€ – 1,1 M€</div>
+    <div class="kpi-sub">Si chaque consultant gère 1-2 missions de plus grâce aux outils</div>
+  </div>
+</div>
+
+<!-- Budget breakdown -->
+<div class="section-label">Ventilation par catégorie</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>Catégorie</th><th>Montant</th><th>Détail</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Salaire Founding Ops</strong></td>
+  <td><strong style="color:var(--accent);">90 – 100 k€</strong></td>
+  <td>1 poste temps plein. Profil hybride ops + tech. C'est l'investissement principal.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Stack SaaS</strong></td>
+  <td><strong style="color:var(--accent);">15 – 25 k€</strong></td>
+  <td>
+    Hiresweet ATS : ~5 k€/an ·
+    CRM (amélioration HubSpot ou migration) : ~5-10 k€/an ·
+    n8n self-hosted (automation) : ~1 k€/an ·
+    BI (Metabase self-hosted ou Looker Studio free) : 0-2 k€ ·
+    API Claude/OpenAI pour agents IA : ~3-5 k€/an
+  </td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Migration & consulting</strong></td>
+  <td><strong style="color:var(--accent);">10 – 15 k€</strong></td>
+  <td>
+    Support migration Airtable (data migration, intégration) : ~10 k€ ·
+    Si besoin : fractional CTO pour architecture API : ~5 k€
+  </td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Outils recrutement</strong></td>
+  <td><strong style="color:var(--accent);">7 – 10 k€</strong></td>
+  <td>LinkedIn Recruiter Pro (déjà en place, renouvellement) · Hiresweet license</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Contingence & tests</strong></td>
+  <td><strong style="color:var(--accent);">8 – 10 k€</strong></td>
+  <td>Tests marketing (M6+ si la data le justifie) : LinkedIn Ads pilot ~3-5 k€ · Case studies / thought leadership ~3-5 k€</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- Phasing -->
+<div class="section-label">Phasing trimestriel</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>Trimestre</th><th>Budget</th><th>Focus</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Q1 (M1-3)</strong></td>
+  <td>35 – 45 k€</td>
+  <td>Salaire (3 mois) + licences outils + début migration Airtable</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Q2 (M4-6)</strong></td>
+  <td>40 – 50 k€</td>
+  <td>Salaire + déploiement agents IA + migration stack + consulting</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Q3 (M7-9)</strong></td>
+  <td>30 – 35 k€</td>
+  <td>Salaire + optimisation + éventuels tests marketing</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Q4 (M10-12)</strong></td>
+  <td>25 – 30 k€</td>
+  <td>Salaire + renouvellements licences + bilan ROI + plan Year 2</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- Justification -->
+<div class="callout mb-24" style="border-color:var(--green); background:var(--green-dim);">
+  <div class="callout-title" style="color:var(--green);">Justification aux fondateurs</div>
+  <div class="callout-body" style="color:var(--text2);">
+    <strong style="color:var(--text);">~140 k€ pour débloquer 1,8 M€ de revenue incrémental (3M → 4,8M) = ~8% du delta.</strong><br><br>
+    C'est un ratio d'investissement sain pour un cabinet en croissance. Sans cet investissement, trois scénarios d'échec apparaissent d'ici M6 :<br>
+    1. <strong style="color:var(--red);">Sales ferme des deals que Delivery ne peut pas staffer</strong> → churn client + NPS effondré<br>
+    2. <strong style="color:var(--red);">Le réseau fondateurs sature</strong> → pipeline sec, target inaccessible<br>
+    3. <strong style="color:var(--red);">Airtable craque sous la charge</strong> → paralysie opérationnelle<br><br>
+    Le coût de l'inaction est bien supérieur au budget proposé.
+  </div>
+</div>
+
+<!-- Difference vs audit RevOps -->
+<div class="section-label">Pourquoi ce budget diffère de l'audit RevOps (150-200 k€)</div>
+<div class="card">
+  <p>L'audit RevOps (MCP) recommandait 150-200 k€ incluant des BDR (80-100 k€ de coûts people) et des outils sales enterprise (ZoomInfo ~15 k€, HubSpot Pro upgrade ~10 k€). Ce budget partait d'un modèle classique avec une équipe sales dédiée.</p>
+  <p><strong style="color:var(--text);">Chez Sonnar, les consultants font le business development eux-mêmes.</strong> L'investissement le plus rentable n'est pas d'ajouter des BDR, mais de rendre chaque consultant 50% plus efficace avec les bons outils et processus. D'où un budget recentré sur : 1 Founding Ops (senior, 90-100 k€) + stack intelligente + agents IA ciblés — sans les BDR ni les outils sales enterprise.</p>
+  <p>Si les données M3-M6 montrent qu'une fonction BD/marketing séparée est nécessaire (lead source mix >70% founder-dependent sans amélioration), le budget Year 1 peut être révisé à la hausse avec une enveloppe complémentaire de 30-50 k€.</p>
+</div>
+
+</div>
+
+</div><!-- end .main -->
+
+<script>
+// Tab navigation
+const btns = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.section');
+
+btns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    sections.forEach(s => s.classList.remove('visible'));
+    document.getElementById(tab).classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>

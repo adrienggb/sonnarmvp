@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(npm run seed)",
+      "Bash(npm run test:*)",
+      "Bash(npx n8n)",
+      "Bash(node src/airtable/setup-script.js)",
+      "Bash(git status)",
+      "Bash(git diff)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit*)",
+      "Bash(git push)",
+      "Bash(mkdir -p *)",
+      "Bash(cp *)",
+      "Bash(mv prds/**/* prds/**/*)",
+      "Bash(ls *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(curl * | bash)",
+      "Bash(npm publish)"
+    ]
+  }
+}

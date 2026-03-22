@@ -1,0 +1,75 @@
+{
+  "missions": [
+    {
+      "id": "mission_001",
+      "name": "VP Sales — Fintech Scale-up",
+      "client_name": "Sophie Marchand",
+      "client_email": "s.marchand@payflow.io",
+      "report_frequency": "weekly",
+      "status": "active",
+      "persona_target": "VP Sales avec expérience en fintech B2B SaaS, ayant scalé une équipe 10+ commerciaux. Vente aux banques/néobanques appréciée. Anglais indispensable. 130-160k€ fixe + variable.",
+      "salary_range": "130-160k€",
+      "location": "Paris, 2j remote possible"
+    },
+    {
+      "id": "mission_002",
+      "name": "Head of Engineering — SaaS B2B",
+      "client_name": "Marc Lefebvre",
+      "client_email": "m.lefebvre@operatech.fr",
+      "report_frequency": "weekly",
+      "status": "active",
+      "persona_target": "Head of Eng ou CTO ayant managé 15-30 ingénieurs. Expérience cloud-native (AWS/GCP), stack moderne. Capacité à parler business autant que technique. 120-145k€.",
+      "salary_range": "120-145k€",
+      "location": "Lyon, full remote possible"
+    },
+    {
+      "id": "mission_003",
+      "name": "DRH — ETI Industrielle",
+      "client_name": "Philippe Bertrand",
+      "client_email": "p.bertrand@metalux-group.com",
+      "report_frequency": "biweekly",
+      "status": "active",
+      "persona_target": "DRH expérimenté(e) en industrie, restructurations et accords sociaux complexes. Entreprises 500-2000 salariés. Relations syndicales solides. 95-115k€.",
+      "salary_range": "95-115k€",
+      "location": "Lille, 1j remote max"
+    }
+  ],
+  "candidates": [
+    { "id": "cand_001", "name": "Julien Favre", "current_title": "Director of Sales EMEA", "current_company": "Stripe" },
+    { "id": "cand_002", "name": "Camille Nguyen", "current_title": "VP Sales", "current_company": "Spendesk" },
+    { "id": "cand_003", "name": "Antoine Roux", "current_title": "Head of Sales", "current_company": "Qonto" },
+    { "id": "cand_004", "name": "Sarah Dumas", "current_title": "Sales Director", "current_company": "Pennylane" },
+    { "id": "cand_005", "name": "Thomas Klein", "current_title": "Engineering Manager", "current_company": "Alan" },
+    { "id": "cand_006", "name": "Marie Leroy", "current_title": "Head of Engineering", "current_company": "Back Market" },
+    { "id": "cand_007", "name": "Pierre Moreau", "current_title": "CTO", "current_company": "SaaS B2B (150p)" },
+    { "id": "cand_008", "name": "Isabelle Garnier", "current_title": "DRH", "current_company": "Michelin" },
+    { "id": "cand_009", "name": "François Martin", "current_title": "DRH Groupe", "current_company": "Decathlon" }
+  ],
+  "pipeline": [
+    { "mission_id": "mission_001", "candidate_id": "cand_001", "stage": "E2" },
+    { "mission_id": "mission_001", "candidate_id": "cand_002", "stage": "Presented" },
+    { "mission_id": "mission_001", "candidate_id": "cand_003", "stage": "Qualified" },
+    { "mission_id": "mission_001", "candidate_id": "cand_004", "stage": "Rejected" },
+    { "mission_id": "mission_002", "candidate_id": "cand_005", "stage": "Call Done" },
+    { "mission_id": "mission_002", "candidate_id": "cand_006", "stage": "Presented" },
+    { "mission_id": "mission_002", "candidate_id": "cand_007", "stage": "Qualified" },
+    { "mission_id": "mission_003", "candidate_id": "cand_008", "stage": "Contacted" },
+    { "mission_id": "mission_003", "candidate_id": "cand_009", "stage": "Sourced" }
+  ],
+  "qualifications": [
+    {
+      "candidate_id": "cand_001",
+      "mission_id": "mission_001",
+      "interview_date": "2025-03-14",
+      "raw_transcript": "Julien, parle-moi de ton parcours chez Stripe. J'ai passé 4 ans comme Director of Sales EMEA. J'ai monté l'équipe de 8 à 24 commerciaux, on a triplé le ARR sur la région. Ce qui m'a le plus appris c'est gérer des cycles de vente très longs avec des grandes banques — BNP, Société Générale — où il faut convaincre à la fois les équipes tech et les comités de direction. Côté rémunération, je suis à 145k fixe + 40k variable. Je cherche autour de 155-165k fixe pour un poste de VP. Disponible dans 3 mois, basé à Paris.",
+      "cr_source": "ai"
+    },
+    {
+      "candidate_id": "cand_006",
+      "mission_id": "mission_002",
+      "interview_date": "2025-03-17",
+      "raw_transcript": "Marie, comment tu décrirais ton style de management ? Je suis très orientée outcomes. J'ai 22 ingénieurs chez Back Market répartis en 4 squads. Ma priorité c'est créer les conditions pour que les équipes livrent — beaucoup de travail sur les processus et l'élimination des blocages. Je code encore environ 20% de mon temps pour garder la crédibilité technique. On est full AWS, stack microservices, j'ai piloté la migration vers une archi event-driven l'an dernier. Je cherche entre 130-140k. Dispo dans 2 mois.",
+      "cr_source": "ai"
+    }
+  ]
+}

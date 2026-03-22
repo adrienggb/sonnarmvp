@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRD — Automated Mission Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090F;
+  --surface: #0E1219;
+  --surface2: #151B26;
+  --surface3: #1C2433;
+  --border: #252F40;
+  --accent: #4F8EF7;
+  --accent-glow: rgba(79,142,247,0.10);
+  --green: #34D399;
+  --green-dim: rgba(52,211,153,0.12);
+  --amber: #FBBF24;
+  --amber-dim: rgba(251,191,36,0.10);
+  --red: #F87171;
+  --red-dim: rgba(248,113,113,0.10);
+  --purple: #A78BFA;
+  --purple-dim: rgba(167,139,250,0.10);
+  --cyan: #22D3EE;
+  --cyan-dim: rgba(34,211,238,0.10);
+  --text: #E8EDF5;
+  --text2: #A0ADC2;
+  --text3: #6B7A94;
+  --text4: #3D4D66;
+  --font: 'DM Sans', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); color: var(--text); font-family: var(--font); line-height:1.6; }
+
+/* NAV */
+.nav { position:sticky; top:0; z-index:200; background:rgba(7,9,15,0.92); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); }
+.nav-inner { max-width:1060px; margin:0 auto; padding:0 24px; display:flex; align-items:center; gap:4px; overflow-x:auto; scrollbar-width:none; }
+.nav-inner::-webkit-scrollbar { display:none; }
+.nav-brand { font-size:11px; font-weight:800; color:var(--accent); letter-spacing:1.5px; text-transform:uppercase; padding:14px 16px 14px 0; margin-right:12px; border-right:1px solid var(--border); white-space:nowrap; font-family:var(--mono); }
+.nav-btn { background:none; border:none; color:var(--text3); font-family:var(--font); font-size:12.5px; font-weight:600; padding:14px 13px; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; transition:all .15s; }
+.nav-btn:hover { color:var(--text2); }
+.nav-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+.main { max-width:1060px; margin:0 auto; padding:32px 24px 80px; }
+.section { display:none; }
+.section.visible { display:block; animation:fadeUp .3s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.page-title { font-size:26px; font-weight:800; margin-bottom:6px; line-height:1.2; }
+.page-sub { font-size:14px; color:var(--text3); margin-bottom:32px; max-width:640px; }
+.section-label { font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--accent); font-family:var(--mono); margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+.section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+h2 { font-size:20px; font-weight:800; margin-bottom:8px; line-height:1.3; }
+h3 { font-size:16px; font-weight:700; margin-bottom:6px; }
+p { color:var(--text2); font-size:14px; margin-bottom:12px; }
+
+.card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; margin-bottom:16px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+@media(max-width:720px){ .grid-2,.grid-3{grid-template-columns:1fr;} }
+
+.kpi-box { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:18px; }
+.kpi-label { font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px; }
+.kpi-value { font-size:26px; font-weight:800; font-family:var(--mono); }
+.kpi-sub { font-size:12px; color:var(--text3); margin-top:4px; }
+
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:10px 12px; font-size:10.5px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--text3); background:var(--surface2); border-bottom:1px solid var(--border); }
+td { padding:10px 12px; border-bottom:1px solid var(--border); color:var(--text2); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+
+.badge { display:inline-block; padding:2px 9px; border-radius:5px; font-size:11px; font-weight:700; font-family:var(--mono); }
+.badge-red { background:var(--red-dim); color:var(--red); }
+.badge-amber { background:var(--amber-dim); color:var(--amber); }
+.badge-green { background:var(--green-dim); color:var(--green); }
+.badge-purple { background:var(--purple-dim); color:var(--purple); }
+.badge-blue { background:var(--accent-glow); color:var(--accent); }
+.badge-cyan { background:var(--cyan-dim); color:var(--cyan); }
+
+.callout { padding:18px 20px; border-radius:10px; border:1px solid; margin-bottom:20px; }
+.callout-title { font-size:13px; font-weight:800; margin-bottom:6px; }
+.callout-body { font-size:13px; line-height:1.6; }
+
+.dep-arrow { display:flex; align-items:center; gap:8px; padding:8px 14px; margin-bottom:6px; background:var(--surface); border:1px solid var(--border); border-radius:8px; font-size:13px; }
+.dep-arrow .from { color:var(--text); font-weight:700; min-width:60px; }
+.dep-arrow .arrow { color:var(--text4); font-family:var(--mono); }
+.dep-arrow .to { color:var(--text2); }
+
+.task-row { display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid var(--border); align-items:flex-start; }
+.task-row:last-child { border-bottom:none; }
+.task-id { font-family:var(--mono); font-size:11px; font-weight:700; min-width:40px; padding-top:2px; }
+.task-content { flex:1; }
+.task-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.task-desc { font-size:12.5px; color:var(--text2); line-height:1.5; }
+.task-meta { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
+
+.flow-row { display:flex; align-items:center; gap:0; margin:20px 0; overflow-x:auto; padding-bottom:8px; }
+.flow-node { padding:12px 18px; border-radius:10px; text-align:center; min-width:130px; flex-shrink:0; border:1px solid var(--border); background:var(--surface); }
+.flow-node-title { font-size:10px; font-weight:800; font-family:var(--mono); letter-spacing:0.5px; margin-bottom:3px; }
+.flow-node-sub { font-size:10px; color:var(--text3); }
+.flow-arrow { width:28px; height:2px; background:var(--border); flex-shrink:0; position:relative; }
+.flow-arrow::after { content:'›'; position:absolute; right:-4px; top:-9px; color:var(--text3); font-size:16px; }
+
+.mb-8{margin-bottom:8px} .mb-16{margin-bottom:16px} .mb-24{margin-bottom:24px} .mb-32{margin-bottom:32px} .mt-24{margin-top:24px} .mt-32{margin-top:32px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="nav-inner">
+  <div class="nav-brand">PRD · REPORTING</div>
+  <button class="nav-btn active" data-tab="overview">Overview</button>
+  <button class="nav-btn" data-tab="arch">Architecture</button>
+  <button class="nav-btn" data-tab="tasks">Tâches</button>
+  <button class="nav-btn" data-tab="deps">Dépendances</button>
+  <button class="nav-btn" data-tab="edge">Edge Cases</button>
+  <button class="nav-btn" data-tab="scope">Non-scope & Risques</button>
+</div>
+</nav>
+
+<div class="main">
+
+<!-- ══════════════════════════════════════════ -->
+<!-- OVERVIEW -->
+<!-- ══════════════════════════════════════════ -->
+<div id="overview" class="section visible">
+
+<div class="page-title">Automated Mission Reporting</div>
+<div class="page-sub">PRD — Problème #1 : éliminer les 10h/semaine de reporting manuel par consultant en automatisant la génération de reports clients et de CR d'entretien.</div>
+
+<div class="grid-3 mb-32">
+  <div class="kpi-box">
+    <div class="kpi-label">Temps actuel</div>
+    <div class="kpi-value" style="color:var(--red);">10h</div>
+    <div class="kpi-sub">/ consultant / semaine</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-label">Temps cible</div>
+    <div class="kpi-value" style="color:var(--green);">1-2h</div>
+    <div class="kpi-sub">/ consultant / semaine</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-label">Temps libéré (12 consultants)</div>
+    <div class="kpi-value" style="color:var(--accent);">~100h</div>
+    <div class="kpi-sub">/ semaine · soit ~2,5 ETP réinjectés</div>
+  </div>
+</div>
+
+<!-- Problem breakdown -->
+<div class="section-label">Décomposition du problème</div>
+
+<div class="grid-2 mb-32">
+  <div class="card">
+    <h3 style="color:var(--red); margin-bottom:10px;">Pain A — Report client hebdo (~6-7h)</h3>
+    <p><strong style="color:var(--text);">Aujourd'hui :</strong> Le consultant ouvre Airtable, compte manuellement les candidats à chaque stage du funnel, screenshot la table de performance, ouvre Gmail, rédige un mail avec les KPIs, les candidats rencontrés, les actions prévues. Envoie.</p>
+    <p><strong style="color:var(--text);">Problèmes :</strong> KPIs self-reported (pas system-derived), format inconsistant entre consultants, data en retard d'une semaine, aucune visibilité client entre deux envois, screenshot non interactif.</p>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--amber); margin-bottom:10px;">Pain B — CR d'entretien (~3-4h)</h3>
+    <p><strong style="color:var(--text);">Aujourd'hui :</strong> Le consultant enregistre le call (audio), passe la transcription dans ChatGPT/Gemini, copie le résultat, reformate manuellement, colle dans Airtable (champ CR du qualification record).</p>
+    <p><strong style="color:var(--text);">Problèmes :</strong> Pas de prompt standardisé → qualité variable. Pas de structure imposée → certains CR font 3 lignes, d'autres 3 pages. Pas de lien entre le CR et les champs structurés (score, forces, faiblesses).</p>
+  </div>
+</div>
+
+<!-- Solution overview -->
+<div class="section-label">Solution — Vue d'ensemble</div>
+
+<div class="callout mb-24" style="border-color:var(--accent); background:var(--accent-glow);">
+  <div class="callout-title" style="color:var(--accent);">2 modules, 1 stack</div>
+  <div class="callout-body" style="color:var(--text2);">
+    <strong style="color:var(--text);">Module A — Client Report Auto :</strong> Un portail client (page web statique par mission) qui se met à jour en temps réel depuis Airtable. + Un email hebdo auto-généré par Claude (KPIs + résumé + actions) envoyé via Gmail/n8n. Le consultant ne fait plus que <strong style="color:var(--green);">relire et valider</strong> avant envoi.<br><br>
+    <strong style="color:var(--text);">Module B — CR d'entretien structuré :</strong> Un workflow n8n qui prend la transcription audio (Metaview, Grain, ou upload manuel), la passe dans Claude API avec un prompt structuré, et injecte le CR formaté + les champs structurés directement dans Airtable. Le consultant ne fait plus que <strong style="color:var(--green);">relire et ajuster le score</strong>.
+  </div>
+</div>
+
+<!-- Stack -->
+<div class="section-label">Stack MVP</div>
+<div class="card mb-16">
+<table>
+<thead><tr><th>Composant</th><th>Outil</th><th>Coût</th><th>Rôle</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Base de données</strong></td>
+  <td>Airtable (Free/Team)</td>
+  <td>Existant</td>
+  <td>Source of truth : missions, candidats, pipeline, qualification records</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Automatisation</strong></td>
+  <td>n8n (self-hosted ou cloud)</td>
+  <td>~20€/mois</td>
+  <td>Orchestration : triggers Airtable → Claude API → Airtable/Gmail</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Intelligence</strong></td>
+  <td>Claude API (Sonnet)</td>
+  <td>~50-80€/mois</td>
+  <td>Génération CR structurés + résumés hebdo + extraction champs</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Portail client</strong></td>
+  <td>Airtable Interface / page HTML statique</td>
+  <td>0€</td>
+  <td>Vue client live du funnel, candidats présentés, timeline</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Transcription</strong></td>
+  <td>Upload manuel (v1) → Metaview (v2)</td>
+  <td>0€ (v1)</td>
+  <td>Audio call → texte. V1 : le consultant colle la transcription. V2 : auto via Metaview webhook.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Email</strong></td>
+  <td>Gmail API via n8n</td>
+  <td>0€</td>
+  <td>Envoi du report hebdo au client (draft Gmail pour validation consultant)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout mb-16" style="border-color:var(--green); background:var(--green-dim);">
+  <div class="callout-title" style="color:var(--green);">Budget total MVP : ~70-100€/mois</div>
+  <div class="callout-body" style="color:var(--text2);">n8n cloud (~20€) + Claude API usage (~50-80€ pour ~200 CR/mois + 50 reports hebdo). Zéro coût d'infrastructure supplémentaire. Le portail client est une Airtable Interface (gratuit) ou une page HTML servie depuis GitHub Pages (gratuit).</div>
+</div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- ARCHITECTURE -->
+<!-- ══════════════════════════════════════════ -->
+<div id="arch" class="section">
+
+<div class="page-title">Architecture & Flux de données</div>
+<div class="page-sub">Comment les données circulent, du call au client, sans intervention manuelle.</div>
+
+<!-- Module A flow -->
+<div class="section-label">Module A — Client Report automatisé</div>
+
+<div class="flow-row mb-16">
+  <div class="flow-node" style="border-color:var(--accent);">
+    <div class="flow-node-title" style="color:var(--accent);">AIRTABLE</div>
+    <div class="flow-node-sub">Pipeline stages<br>auto-comptés</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node">
+    <div class="flow-node-title">N8N TRIGGER</div>
+    <div class="flow-node-sub">Cron lundi 8h<br>ou on-demand</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--purple);">
+    <div class="flow-node-title" style="color:var(--purple);">CLAUDE API</div>
+    <div class="flow-node-sub">KPIs + candidats<br>→ résumé + actions</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node">
+    <div class="flow-node-title">GMAIL DRAFT</div>
+    <div class="flow-node-sub">Draft dans la boîte<br>du consultant</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--green);">
+    <div class="flow-node-title" style="color:var(--green);">CONSULTANT</div>
+    <div class="flow-node-sub">Relit, ajuste,<br>clique "Envoyer"</div>
+  </div>
+</div>
+
+<div class="card mb-32">
+  <h3 style="margin-bottom:10px;">Détail du flux</h3>
+  <p><strong style="color:var(--text);">1. Collecte (n8n) :</strong> Le workflow interroge Airtable via API pour la mission concernée. Il récupère : tous les candidats du pipe avec leur stage actuel, les mouvements de la semaine (nouveaux candidats, changements de stage), les qualification records créés/modifiés cette semaine, les KPIs du funnel (comptés automatiquement par stage, pas self-reported).</p>
+  <p><strong style="color:var(--text);">2. Génération (Claude API) :</strong> Les données sont envoyées à Claude avec un prompt structuré qui produit : un résumé exécutif (3-4 phrases), un tableau de KPIs formaté, la liste des candidats rencontrés cette semaine (avec résumé 2 lignes de chaque), les actions prévues pour la semaine suivante, un signal d'alerte si un KPI dévie des benchmarks.</p>
+  <p><strong style="color:var(--text);">3. Livraison (Gmail) :</strong> Le résultat est injecté dans un draft Gmail dans la boîte du consultant (pas envoyé directement). Le consultant relit, ajuste le ton si besoin, et envoie. Ceci préserve le contrôle humain et la relation client.</p>
+  <p><strong style="color:var(--text);">4. Portail (Airtable Interface) :</strong> En parallèle, une vue Airtable Interface (ou page HTML) est partagée au client via un lien. Elle affiche le funnel live, les candidats présentés, le timeline. Mise à jour automatique — le client peut consulter à tout moment sans attendre l'email.</p>
+</div>
+
+<!-- Module B flow -->
+<div class="section-label">Module B — CR d'entretien structuré</div>
+
+<div class="flow-row mb-16">
+  <div class="flow-node" style="border-color:var(--amber);">
+    <div class="flow-node-title" style="color:var(--amber);">TRANSCRIPTION</div>
+    <div class="flow-node-sub">Collée par consultant<br>(v1) ou Metaview (v2)</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node">
+    <div class="flow-node-title">N8N WEBHOOK</div>
+    <div class="flow-node-sub">Reçoit transcript<br>+ mission_id + candidate_id</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--purple);">
+    <div class="flow-node-title" style="color:var(--purple);">CLAUDE API</div>
+    <div class="flow-node-sub">Prompt structuré<br>→ CR + champs</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--accent);">
+    <div class="flow-node-title" style="color:var(--accent);">AIRTABLE</div>
+    <div class="flow-node-sub">CR dans qualification<br>+ update champs</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--green);">
+    <div class="flow-node-title" style="color:var(--green);">CONSULTANT</div>
+    <div class="flow-node-sub">Valide le score<br>ajuste si besoin</div>
+  </div>
+</div>
+
+<div class="card mb-32">
+  <h3 style="margin-bottom:10px;">Détail du flux</h3>
+  <p><strong style="color:var(--text);">1. Input :</strong> V1 (MVP) : le consultant colle la transcription dans un formulaire Airtable ou une interface simple (+ sélectionne mission et candidat). V2 : Metaview envoie la transcription automatiquement via webhook à n8n.</p>
+  <p><strong style="color:var(--text);">2. Structuration (Claude API) :</strong> Le prompt reçoit la transcription + les critères d'évaluation de la mission (récupérés depuis Airtable). Il produit : un CR structuré (contexte, parcours, motivations, forces, faiblesses, recommandation), un score suggéré (1-5), les champs structurés extraits (nombre de personnes managées, salaire actuel/cible, localisation souhaitée, disponibilité, aspirations).</p>
+  <p><strong style="color:var(--text);">3. Injection (Airtable API) :</strong> Le CR est écrit dans le qualification record. Les champs structurés sont mis à jour dans le candidate record. Le score est marqué comme "suggéré par IA" — le consultant peut override.</p>
+  <p><strong style="color:var(--text);">4. Feedback loop :</strong> Si le consultant modifie le score ou le CR, cette correction est loguée. À terme, ces corrections alimentent l'amélioration du prompt (mais hors scope MVP).</p>
+</div>
+
+<!-- Data model impact -->
+<div class="section-label">Impact sur le data model Airtable</div>
+
+<div class="card mb-16">
+<table>
+<thead><tr><th>Table</th><th>Champs à ajouter</th><th>Pourquoi</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Mission</strong></td>
+  <td><code>client_email</code> · <code>client_portal_url</code> · <code>report_frequency</code> · <code>last_report_sent_at</code></td>
+  <td>Pour que n8n sache où envoyer et quand le dernier report a été envoyé.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Pipeline Record</strong></td>
+  <td><code>stage_changed_at</code> (timestamp du dernier changement de stage)</td>
+  <td>Pour détecter les mouvements de la semaine et calculer les KPIs automatiquement.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Qualification</strong></td>
+  <td><code>raw_transcript</code> · <code>ai_generated_cr</code> · <code>ai_suggested_score</code> · <code>consultant_final_score</code> · <code>cr_source</code> (manual/ai)</td>
+  <td>Séparer le CR brut, le CR IA, et le score final du consultant. Traçabilité complète.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Candidate</strong></td>
+  <td><code>nb_direct_reports</code> · <code>availability_date</code> · <code>ai_extracted_fields_log</code></td>
+  <td>Champs structurés extraits automatiquement du CR. Résout aussi partiellement le problème #3 (recherche qualitative).</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);"><em>Nouveau :</em> Report Log</strong></td>
+  <td><code>mission_id</code> · <code>sent_at</code> · <code>report_content</code> · <code>kpi_snapshot</code> · <code>consultant_edited</code> (bool)</td>
+  <td>Historique des reports envoyés. Audit trail + mesure du taux d'edit consultant (proxy de la qualité IA).</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout" style="border-color:var(--amber); background:var(--amber-dim);">
+  <div class="callout-title" style="color:var(--amber);">Point d'attention : KPIs system-derived vs self-reported</div>
+  <div class="callout-body" style="color:var(--text2);">
+    Aujourd'hui les KPIs du funnel sont saisis manuellement par le consultant. Pour que le Module A fonctionne, il faut que les KPIs soient <strong style="color:var(--text);">dérivés automatiquement des stages du pipeline</strong> dans Airtable. Cela signifie que le champ <code>pipeline_stage</code> doit être un enum strict (pas du texte libre) et que chaque changement de stage doit être timestampé. C'est un <strong style="color:var(--text);">prérequis bloquant</strong> — tâche T0 du projet.
+  </div>
+</div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TASKS -->
+<!-- ══════════════════════════════════════════ -->
+<div id="tasks" class="section">
+
+<div class="page-title">Tâches & Phases</div>
+<div class="page-sub">Découpé en 4 phases. Chaque phase produit un livrable testable. Total estimé : 3-4 semaines.</div>
+
+<!-- Phase 0 -->
+<div class="section-label">Phase 0 — Prérequis data (3-4 jours)</div>
+<div class="card mb-24">
+  <div class="task-row">
+    <div class="task-id" style="color:var(--red);">T0.1</div>
+    <div class="task-content">
+      <div class="task-title">Normaliser pipeline_stage en enum strict</div>
+      <div class="task-desc">Remplacer le champ texte libre par un Single Select avec les stages du funnel Sonnar : <code>Sourced → Contacted → Responded → Call Done → Qualified → Presented → E1 → E2 → E3 → Offer → Accepted → Rejected</code>. Migrer les données existantes. C'est le prérequis bloquant pour des KPIs auto-dérivés.</div>
+      <div class="task-meta">
+        <span class="badge badge-red">BLOQUANT</span>
+        <span class="badge badge-blue">Airtable</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--red);">T0.2</div>
+    <div class="task-content">
+      <div class="task-title">Ajouter stage_changed_at (timestamp)</div>
+      <div class="task-desc">Champ <code>Last Modified Time</code> filtré sur <code>pipeline_stage</code> dans la table Pipeline/Qualification. Permet de détecter les mouvements de la semaine et de calculer le time-in-stage.</div>
+      <div class="task-meta">
+        <span class="badge badge-red">BLOQUANT</span>
+        <span class="badge badge-blue">Airtable</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id">T0.3</div>
+    <div class="task-content">
+      <div class="task-title">Créer la base Airtable de démo (si MVP hors prod)</div>
+      <div class="task-desc">Base avec données fictives réalistes : 3 missions, 30-50 candidats, pipeline peuplé à différents stages, quelques qualification records avec CR. Utiliser Claude Code pour générer les données.</div>
+      <div class="task-meta">
+        <span class="badge badge-purple">Claude Code</span>
+        <span class="badge badge-blue">Airtable API</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id">T0.4</div>
+    <div class="task-content">
+      <div class="task-title">Ajouter les champs manquants au data model</div>
+      <div class="task-desc"><code>client_email</code>, <code>client_portal_url</code>, <code>report_frequency</code>, <code>last_report_sent_at</code> sur Mission. <code>raw_transcript</code>, <code>ai_generated_cr</code>, <code>ai_suggested_score</code>, <code>cr_source</code> sur Qualification. Table <code>Report Log</code>.</div>
+      <div class="task-meta">
+        <span class="badge badge-blue">Airtable</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Phase 1 -->
+<div class="section-label">Phase 1 — Module B : CR d'entretien IA (5-7 jours)</div>
+<p class="mb-16" style="color:var(--text3);">On commence par le Module B car il est plus simple (un seul trigger, un seul output) et il produit un résultat visible immédiatement pour les consultants. Le Module A en dépend partiellement (les CR alimentent le report).</p>
+<div class="card mb-24">
+  <div class="task-row">
+    <div class="task-id" style="color:var(--accent);">T1.1</div>
+    <div class="task-content">
+      <div class="task-title">Concevoir le prompt de structuration CR</div>
+      <div class="task-desc">Prompt Claude qui reçoit : transcription + critères d'évaluation de la mission + persona cible. Output JSON structuré : <code>{ summary, strengths[], weaknesses[], recommendation, suggested_score, extracted_fields: { salary, location, management_scope, availability, aspirations } }</code>. Itérer avec 3-5 transcriptions réelles pour calibrer.</div>
+      <div class="task-meta">
+        <span class="badge badge-purple">Claude API</span>
+        <span class="badge badge-amber">Prompt engineering</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--accent);">T1.2</div>
+    <div class="task-content">
+      <div class="task-title">Créer l'interface d'input transcription</div>
+      <div class="task-desc">V1 : un formulaire Airtable (ou Airtable Interface) où le consultant colle la transcription, sélectionne la mission et le candidat. Submit → déclenche le webhook n8n. Minimaliste : 3 champs, 1 bouton.</div>
+      <div class="task-meta">
+        <span class="badge badge-blue">Airtable Interface</span>
+        <span class="badge badge-green">n8n webhook</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--accent);">T1.3</div>
+    <div class="task-content">
+      <div class="task-title">Construire le workflow n8n : transcript → CR → Airtable</div>
+      <div class="task-desc">Workflow : webhook reçoit (transcript, mission_id, candidate_id) → fetch critères mission depuis Airtable → call Claude API → parse JSON → update Airtable qualification record (CR + champs) → update candidate record (champs extraits) → notif Slack au consultant "CR prêt, à valider".</div>
+      <div class="task-meta">
+        <span class="badge badge-green">n8n</span>
+        <span class="badge badge-purple">Claude API</span>
+        <span class="badge badge-blue">Airtable API</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--accent);">T1.4</div>
+    <div class="task-content">
+      <div class="task-title">Test pilote avec 2 consultants</div>
+      <div class="task-desc">Faire tester par 2 consultants sur des missions réelles pendant 1 semaine. Mesurer : temps gagné, taux d'edit du CR IA (proxy qualité), satisfaction consultant (feedback qualitatif).</div>
+      <div class="task-meta">
+        <span class="badge badge-amber">Validation</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Phase 2 -->
+<div class="section-label">Phase 2 — Module A : Report client auto (5-7 jours)</div>
+<div class="card mb-24">
+  <div class="task-row">
+    <div class="task-id" style="color:var(--green);">T2.1</div>
+    <div class="task-content">
+      <div class="task-title">Construire le KPI engine (formules Airtable)</div>
+      <div class="task-desc">Rollup counts par stage au niveau mission : nb candidats Sourced, Contacted, Responded, etc. Taux de conversion entre chaque stage (formules). Comparaison vs benchmarks Sonnar par persona. Tout auto-calculé, zéro saisie manuelle.</div>
+      <div class="task-meta">
+        <span class="badge badge-blue">Airtable</span>
+        <span class="badge badge-red">Dépend T0.1</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--green);">T2.2</div>
+    <div class="task-content">
+      <div class="task-title">Concevoir le prompt de génération report</div>
+      <div class="task-desc">Prompt Claude qui reçoit : KPIs de la semaine, KPIs de la semaine précédente (pour les deltas), liste des candidats rencontrés + résumé 2 lignes de chaque, actions prévues (input consultant optionnel). Output : email HTML formaté avec tonalité professionnelle Sonnar.</div>
+      <div class="task-meta">
+        <span class="badge badge-purple">Claude API</span>
+        <span class="badge badge-amber">Prompt engineering</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--green);">T2.3</div>
+    <div class="task-content">
+      <div class="task-title">Construire le workflow n8n : Airtable → Claude → Gmail draft</div>
+      <div class="task-desc">Cron trigger (lundi 8h) → pour chaque mission active : fetch pipeline data + KPIs + CR de la semaine depuis Airtable → call Claude API → génère email → crée un draft Gmail dans la boîte du consultant assigné. Le consultant reçoit une notif Slack "3 reports prêts à envoyer".</div>
+      <div class="task-meta">
+        <span class="badge badge-green">n8n</span>
+        <span class="badge badge-purple">Claude API</span>
+        <span class="badge badge-blue">Gmail API</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--green);">T2.4</div>
+    <div class="task-content">
+      <div class="task-title">Construire le portail client</div>
+      <div class="task-desc">Option A (rapide) : Airtable Interface en mode "shared view" avec filtrage par mission. Option B (meilleur) : page HTML/React statique qui consomme l'API Airtable, avec le branding Sonnar. Affiche : funnel visuel, candidats présentés (anonymisés ou non selon accord client), timeline des actions.</div>
+      <div class="task-meta">
+        <span class="badge badge-blue">Airtable Interface</span>
+        <span class="badge badge-cyan">ou React + Airtable API</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--green);">T2.5</div>
+    <div class="task-content">
+      <div class="task-title">Créer la table Report Log</div>
+      <div class="task-desc">Chaque report généré est sauvegardé : mission_id, date, contenu, KPI snapshot (pour historique), flag "consultant a édité" (bool). Permet de mesurer la qualité IA dans le temps et de donner un historique client.</div>
+      <div class="task-meta">
+        <span class="badge badge-blue">Airtable</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Phase 3 -->
+<div class="section-label">Phase 3 — Intégration & rollout (3-5 jours)</div>
+<div class="card mb-24">
+  <div class="task-row">
+    <div class="task-id" style="color:var(--purple);">T3.1</div>
+    <div class="task-content">
+      <div class="task-title">Pilote avec 3-4 missions réelles</div>
+      <div class="task-desc">Sélectionner des missions à différents stades (début, milieu, fin). Faire tourner les deux modules en parallèle pendant 2 semaines. Mesurer : temps consultant avant/après, satisfaction consultant, feedback client (le report est-il mieux/pareil/moins bien ?), taux d'edit.</div>
+      <div class="task-meta">
+        <span class="badge badge-amber">Validation</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--purple);">T3.2</div>
+    <div class="task-content">
+      <div class="task-title">Onboarding des 12 consultants</div>
+      <div class="task-desc">Session de 30 min : démo, workflow, comment valider un CR, comment envoyer un report. Documentation Notion (2 pages max). Support Slack channel dédié pendant 2 semaines.</div>
+      <div class="task-meta">
+        <span class="badge badge-amber">Change management</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--purple);">T3.3</div>
+    <div class="task-content">
+      <div class="task-title">Monitoring & alerting</div>
+      <div class="task-desc">Alertes n8n si un workflow échoue. Dashboard simple : nb de CR générés/semaine, nb de reports envoyés, taux d'edit moyen, temps moyen de validation consultant.</div>
+      <div class="task-meta">
+        <span class="badge badge-green">n8n</span>
+      </div>
+    </div>
+  </div>
+  <div class="task-row">
+    <div class="task-id" style="color:var(--purple);">T3.4</div>
+    <div class="task-content">
+      <div class="task-title">Communication client sur le portail</div>
+      <div class="task-desc">Template email pour présenter le portail au client. Positionner comme un upgrade de service Sonnar ("Vous avez désormais une visibilité temps réel sur votre mission"). Contribue directement au positionnement premium (levier 40k€).</div>
+      <div class="task-meta">
+        <span class="badge badge-amber">Sales enablement</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- DEPENDENCIES -->
+<!-- ══════════════════════════════════════════ -->
+<div id="deps" class="section">
+
+<div class="page-title">Dépendances & Chemin critique</div>
+<div class="page-sub">Ce qui bloque quoi, et les intégrations système à anticiper.</div>
+
+<div class="section-label">Chaîne de dépendances</div>
+
+<div class="card mb-24">
+  <div class="dep-arrow">
+    <div class="from" style="color:var(--red);">T0.1</div>
+    <div class="arrow">→</div>
+    <div class="to"><strong style="color:var(--text);">T0.2, T2.1, T2.2, T2.3</strong> — Sans enum strict sur pipeline_stage, aucun KPI ne peut être auto-dérivé. Le Module A entier est bloqué.</div>
+  </div>
+  <div class="dep-arrow">
+    <div class="from" style="color:var(--red);">T0.4</div>
+    <div class="arrow">→</div>
+    <div class="to"><strong style="color:var(--text);">T1.3, T2.3, T2.5</strong> — Les champs manquants doivent exister avant de pouvoir écrire dedans via API.</div>
+  </div>
+  <div class="dep-arrow">
+    <div class="from" style="color:var(--accent);">T1.1</div>
+    <div class="arrow">→</div>
+    <div class="to"><strong style="color:var(--text);">T1.3</strong> — Le prompt doit être calibré avant de construire le workflow n8n autour.</div>
+  </div>
+  <div class="dep-arrow">
+    <div class="from" style="color:var(--accent);">T1.3</div>
+    <div class="arrow">→</div>
+    <div class="to"><strong style="color:var(--text);">T2.2</strong> — Les CR générés par le Module B alimentent le report du Module A (résumé des candidats rencontrés).</div>
+  </div>
+  <div class="dep-arrow">
+    <div class="from" style="color:var(--green);">T2.1</div>
+    <div class="arrow">→</div>
+    <div class="to"><strong style="color:var(--text);">T2.3, T2.4</strong> — Le KPI engine doit fonctionner avant de pouvoir générer un report ou construire le portail.</div>
+  </div>
+  <div class="dep-arrow">
+    <div class="from" style="color:var(--green);">T2.3</div>
+    <div class="arrow">→</div>
+    <div class="to"><strong style="color:var(--text);">T3.1</strong> — Le workflow complet doit tourner avant le pilote.</div>
+  </div>
+</div>
+
+<!-- Chemin critique -->
+<div class="section-label">Chemin critique (timeline minimum)</div>
+<div class="flow-row mb-24">
+  <div class="flow-node" style="border-color:var(--red);">
+    <div class="flow-node-title" style="color:var(--red);">T0.1-T0.4</div>
+    <div class="flow-node-sub">Prérequis data<br>3-4 jours</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--accent);">
+    <div class="flow-node-title" style="color:var(--accent);">T1.1-T1.4</div>
+    <div class="flow-node-sub">Module B (CR)<br>5-7 jours</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--green);">
+    <div class="flow-node-title" style="color:var(--green);">T2.1-T2.5</div>
+    <div class="flow-node-sub">Module A (Report)<br>5-7 jours</div>
+  </div>
+  <div class="flow-arrow"></div>
+  <div class="flow-node" style="border-color:var(--purple);">
+    <div class="flow-node-title" style="color:var(--purple);">T3.1-T3.4</div>
+    <div class="flow-node-sub">Rollout<br>3-5 jours</div>
+  </div>
+</div>
+
+<div class="callout mb-32" style="border-color:var(--accent); background:var(--accent-glow);">
+  <div class="callout-title" style="color:var(--accent);">Timeline totale : 16-23 jours ouvrés (~3-4 semaines)</div>
+  <div class="callout-body" style="color:var(--text2);">En réalité, T0 et T1.1 (prompt engineering) peuvent être parallélisés. T2.4 (portail client) est indépendant et peut être construit en parallèle de T2.3 (workflow report). Timeline optimiste : 3 semaines. Timeline réaliste avec itérations : 4 semaines.</div>
+</div>
+
+<!-- System integration -->
+<div class="section-label">Intégrations système Sonnar à anticiper</div>
+<div class="card mb-16">
+<table>
+<thead><tr><th>Intégration</th><th>Type</th><th>Complexité</th><th>Note</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Airtable API</strong></td>
+  <td>Read + Write</td>
+  <td><span class="badge badge-green">Faible</span></td>
+  <td>API REST bien documentée. Free plan : 5 API calls/sec, suffisant pour le MVP. Attention : le plan Free ne donne pas accès aux Airtable Interfaces (team plan requis pour le portail option A).</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Gmail API (via n8n)</strong></td>
+  <td>Write (draft creation)</td>
+  <td><span class="badge badge-green">Faible</span></td>
+  <td>n8n a un node Gmail natif. Nécessite OAuth setup sur le compte Sonnar. Créer un draft (pas un envoi direct) = moins de risque.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Claude API</strong></td>
+  <td>Prompt → JSON</td>
+  <td><span class="badge badge-green">Faible</span></td>
+  <td>Sonnet 4 via API standard. Structured outputs pour garantir le format JSON des CR.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Slack (notif)</strong></td>
+  <td>Write (message)</td>
+  <td><span class="badge badge-green">Faible</span></td>
+  <td>Webhook Slack pour notifier le consultant quand un CR est prêt ou quand les reports sont générés.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Hiresweet (futur)</strong></td>
+  <td>À investiguer</td>
+  <td><span class="badge badge-amber">Moyenne</span></td>
+  <td>Si la migration ATS est finalisée pendant le projet, les données source passent d'Airtable à Hiresweet. Prévoir une couche d'abstraction dans n8n (un node "fetch pipeline" qui peut pointer vers Airtable OU Hiresweet).</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Metaview (v2)</strong></td>
+  <td>Webhook → n8n</td>
+  <td><span class="badge badge-amber">Moyenne</span></td>
+  <td>Hors scope MVP. En v2, Metaview envoie la transcription automatiquement. Nécessite un abonnement Metaview (~30€/user/mois).</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- EDGE CASES -->
+<!-- ══════════════════════════════════════════ -->
+<div id="edge" class="section">
+
+<div class="page-title">Ce à quoi tu n'as pas pensé</div>
+<div class="page-sub">Edge cases, risques d'adoption, et considérations non évidentes.</div>
+
+<div class="section-label">Adoption & Change Management</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--amber); margin-bottom:10px;">🧠 Les consultants ne font pas "que" du reporting</h3>
+  <p>Les 10h incluent aussi du <strong style="color:var(--text);">temps de réflexion stratégique</strong> que le consultant utilise pour prendre du recul sur la mission. Le mail hebdo est aussi un moment où le consultant structure sa pensée. Si on automatise le mail, on risque de perdre ce moment de prise de recul.</p>
+  <p><strong style="color:var(--green);">Mitigation :</strong> Le workflow génère un <strong>draft</strong>, pas un envoi. Le consultant relit, et le prompt inclut une section "actions recommandées" qui force la réflexion stratégique. On transforme le reporting en <strong>review assistée</strong> plutôt qu'en tâche supprimée.</p>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--amber); margin-bottom:10px;">🔒 Confidentialité des données candidats</h3>
+  <p>Les transcriptions d'entretiens contiennent des données personnelles sensibles (salaire, situation familiale, motivations confidentielles). Les envoyer à Claude API signifie qu'elles transitent par un tiers.</p>
+  <p><strong style="color:var(--green);">Mitigation :</strong> Claude API en mode zero data retention. Vérifier la conformité RGPD de l'usage. Anonymiser les transcriptions avant envoi si nécessaire (retirer les noms d'entreprise, numéros de tel). Documenter le flux dans le registre de traitement RGPD de Sonnar.</p>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--amber); margin-bottom:10px;">📧 Le client répond au mail auto-généré</h3>
+  <p>Aujourd'hui le mail est écrit par le consultant → le client répond au consultant. Si le mail est auto-généré, le ton peut ne pas matcher la relation. Le client peut aussi poser une question sur un détail du report que le consultant n'a pas relu en profondeur.</p>
+  <p><strong style="color:var(--green);">Mitigation :</strong> Le mail est envoyé DEPUIS la boîte du consultant (pas un no-reply). Le draft permet au consultant d'ajuster le ton. Le prompt doit capter le <strong>contexte relationnel</strong> (nouveau client vs relation longue). V2 : stocker le ton des précédents mails pour consistency.</p>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--amber); margin-bottom:10px;">📊 Missions sans mouvement cette semaine</h3>
+  <p>Certaines semaines, rien ne bouge sur une mission (consultants en congé, client en décision, marché sec). Que fait-on ? Un mail vide ? Pas de mail ?</p>
+  <p><strong style="color:var(--green);">Mitigation :</strong> Le prompt détecte l'absence de mouvement et génère un message adapté ("Cette semaine, nous avons consolidé les candidatures en cours. Voici le plan pour la semaine prochaine..."). Option : le consultant peut skip l'envoi via un bouton dans Slack ("Pas de report cette semaine, mission en pause").</p>
+</div>
+
+<div class="section-label mt-32">Edge cases techniques</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--red); margin-bottom:10px;">⚠️ Rate limits Airtable Free plan</h3>
+  <p>Airtable Free : 5 API requests/sec, 1000 records/base. Si on a 17 consultants × 6 missions = 102 missions actives, et le cron du lundi fetch toutes les missions + pipeline data + CR → on peut dépasser les limites.</p>
+  <p><strong style="color:var(--green);">Mitigation :</strong> Stagger les appels dans n8n (traiter les missions séquentiellement avec un délai de 2 sec entre chaque). Si Free plan ne suffit pas, Team plan (~20$/user/mois) donne 100K records et des limites API plus hautes. À budgéter.</p>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--red); margin-bottom:10px;">⚠️ La migration Hiresweet en cours</h3>
+  <p>Si l'ATS migre vers Hiresweet pendant qu'on construit le MVP sur Airtable, les sources de données changent. Le pipeline vit peut-être dans Hiresweet, les candidats dans Airtable, ou un mix des deux.</p>
+  <p><strong style="color:var(--green);">Mitigation :</strong> Abstraire la source de données dans n8n. Un node "fetch_mission_pipeline" qui peut pointer vers Airtable OU Hiresweet. Commencer sur Airtable (existant), mais coder le workflow avec cette flexibilité en tête. Clarifier avec Cyrille/Thibaut : quelle est la timeline de migration ?</p>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--red); margin-bottom:10px;">⚠️ Multi-ATS client</h3>
+  <p>Certains clients demandent que les candidats soient aussi entrés dans leur propre ATS (TeamTailor, Lever...). Le portail Sonnar ne remplace pas cette exigence. Le consultant devra potentiellement toujours faire la saisie dans l'ATS client.</p>
+  <p><strong style="color:var(--green);">Mitigation :</strong> Le portail Sonnar est un complément, pas un remplacement de l'ATS client. Mais il réduit la pression sur le reporting email. V2 : explorer des intégrations push vers les ATS clients les plus courants (API TeamTailor, API Lever).</p>
+</div>
+
+<div class="section-label mt-32">Impact positif non évident</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--green); margin-bottom:10px;">💡 Résout partiellement le problème #3</h3>
+  <p>En extrayant automatiquement des champs structurés depuis les CR (nombre de direct reports, salaire, dispo, aspirations), le Module B crée de la donnée recherchable. C'est une fondation pour la recherche sémantique du problème #3 — sans avoir à construire un pipeline NLP complet maintenant.</p>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--green); margin-bottom:10px;">💡 Alimente directement le levier 40 k€</h3>
+  <p>Un portail client live + des reports auto-générés de qualité consistent = un argument tangible pour justifier le positionnement premium. C'est un <strong style="color:var(--text);">sales asset</strong>, pas juste un outil ops. Cyrille peut dire en call client : "Vous aurez une visibilité temps réel sur votre mission via votre portail dédié."</p>
+</div>
+
+<div class="card mb-16">
+  <h3 style="color:var(--green); margin-bottom:10px;">💡 Les KPIs system-derived débloquent le capacity model</h3>
+  <p>Une fois les KPIs auto-calculés (Phase 0), on a les données pour construire le sync Sales↔Delivery identifié comme risque critique. On sait en temps réel combien de missions chaque consultant gère, à quel stage elles sont, et quand elles se terminent. C'est la base du capacity dashboard pour éviter l'overselling.</p>
+</div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SCOPE -->
+<!-- ══════════════════════════════════════════ -->
+<div id="scope" class="section">
+
+<div class="page-title">Non-scope & Risques</div>
+<div class="page-sub">Ce qu'on ne fait PAS dans le MVP, et les risques à monitorer.</div>
+
+<div class="section-label">Explicitement hors scope MVP</div>
+<div class="card mb-24">
+<table>
+<thead><tr><th>Sujet</th><th>Pourquoi hors scope</th><th>Quand</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Transcription auto (Metaview)</strong></td>
+  <td>Ajoute un outil + un coût. V1 fonctionne avec copier-coller de la transcription.</td>
+  <td>V2 (M3-M4)</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Recherche sémantique dans les CR</strong></td>
+  <td>C'est le problème #3. Le Module B pose les fondations (champs extraits), mais le moteur de recherche est un projet distinct.</td>
+  <td>Projet séparé (M4-M6)</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Push vers ATS client</strong></td>
+  <td>Chaque ATS client a sa propre API. Trop de variance pour un MVP.</td>
+  <td>V2, client par client</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Portail client custom (React)</strong></td>
+  <td>Airtable Interface suffit pour le MVP. Custom seulement si le feedback client le demande.</td>
+  <td>V2 si nécessaire</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Feedback loop (corrections → amélioration prompt)</strong></td>
+  <td>Utile mais pas bloquant. On itère le prompt manuellement pour le MVP.</td>
+  <td>V2 (M3)</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Multi-langue</strong></td>
+  <td>Sonnar est français. Les CR et reports sont en français. Si des clients internationaux arrivent, adapter le prompt.</td>
+  <td>Quand nécessaire</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="section-label">Risques projet</div>
+<div class="card mb-16">
+<table>
+<thead><tr><th>Risque</th><th>Impact</th><th>Probabilité</th><th>Mitigation</th></tr></thead>
+<tbody>
+<tr>
+  <td><strong style="color:var(--text);">Faible adoption consultants</strong></td>
+  <td><span class="badge badge-red">Élevé</span></td>
+  <td><span class="badge badge-amber">Moyenne</span></td>
+  <td>Impliquer 2 consultants dès la Phase 1 (co-design). Ne pas imposer — montrer le gain de temps. Laisser le consultant garder le contrôle (draft, pas envoi auto).</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Qualité CR IA insuffisante</strong></td>
+  <td><span class="badge badge-amber">Moyen</span></td>
+  <td><span class="badge badge-amber">Moyenne</span></td>
+  <td>Itérer le prompt avec des transcriptions réelles. Mesurer le taux d'edit. Seuil : si >50% des CR sont réécris significativement, retravailler le prompt.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Migration Hiresweet casse le flux</strong></td>
+  <td><span class="badge badge-red">Élevé</span></td>
+  <td><span class="badge badge-green">Faible</span></td>
+  <td>Couche d'abstraction dans n8n. Aligner le timing avec la migration.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">Limites Airtable Free plan</strong></td>
+  <td><span class="badge badge-amber">Moyen</span></td>
+  <td><span class="badge badge-amber">Moyenne</span></td>
+  <td>Monitorer l'usage API dès le pilote. Budget Team plan (~240$/an) si nécessaire.</td>
+</tr>
+<tr>
+  <td><strong style="color:var(--text);">RGPD sur les transcriptions</strong></td>
+  <td><span class="badge badge-red">Élevé</span></td>
+  <td><span class="badge badge-green">Faible</span></td>
+  <td>Claude API zero retention. Documenter le traitement. Informer les candidats si nécessaire.</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- Success metrics -->
+<div class="section-label mt-32">Critères de succès du MVP</div>
+<div class="grid-3 mb-16">
+  <div class="kpi-box" style="border-color:var(--green);">
+    <div class="kpi-label">Temps reporting</div>
+    <div class="kpi-value" style="color:var(--green);">-70%</div>
+    <div class="kpi-sub">De 10h à 2-3h/semaine/consultant</div>
+  </div>
+  <div class="kpi-box" style="border-color:var(--accent);">
+    <div class="kpi-label">Taux d'edit CR IA</div>
+    <div class="kpi-value" style="color:var(--accent);"><50%</div>
+    <div class="kpi-sub">Moins de la moitié des CR réécrits significativement</div>
+  </div>
+  <div class="kpi-box" style="border-color:var(--purple);">
+    <div class="kpi-label">Adoption consultants</div>
+    <div class="kpi-value" style="color:var(--purple);">100%</div>
+    <div class="kpi-sub">12/12 consultants utilisent le workflow à M+2</div>
+  </div>
+</div>
+<div class="grid-3">
+  <div class="kpi-box">
+    <div class="kpi-label">NPS client (report quality)</div>
+    <div class="kpi-value" style="color:var(--text);">≥ baseline</div>
+    <div class="kpi-sub">Le report auto ne doit pas dégrader la satisfaction</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-label">Délai livraison report</div>
+    <div class="kpi-value" style="color:var(--text);">J+0</div>
+    <div class="kpi-sub">Report dispo lundi matin (vs vendredi soir actuellement)</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-label">Budget mensuel</div>
+    <div class="kpi-value" style="color:var(--text);"><150€</div>
+    <div class="kpi-sub">n8n + Claude API + éventuellement Airtable Team</div>
+  </div>
+</div>
+
+</div>
+
+</div><!-- end .main -->
+
+<script>
+const btns = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.section');
+btns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    sections.forEach(s => s.classList.remove('visible'));
+    document.getElementById(tab).classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>
