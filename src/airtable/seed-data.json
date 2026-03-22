@@ -32,6 +32,28 @@
       "persona_target": "DRH expérimenté(e) en industrie, restructurations et accords sociaux complexes. Entreprises 500-2000 salariés. Relations syndicales solides. 95-115k€.",
       "salary_range": "95-115k€",
       "location": "Lille, 1j remote max"
+    },
+    {
+      "id": "mission_004",
+      "name": "CFO — Startup Series B",
+      "client_name": "Amandine Roussel",
+      "client_email": "a.roussel@carbo.earth",
+      "report_frequency": "weekly",
+      "status": "active",
+      "persona_target": "CFO ou DAF ayant levé des fonds (Series B/C). Maîtrise des normes IFRS, reporting investisseurs. Expérience startup tech ou impact. Anglais courant. 130-155k€.",
+      "salary_range": "130-155k€",
+      "location": "Paris, hybride"
+    },
+    {
+      "id": "mission_005",
+      "name": "CMO — E-commerce Pure Player",
+      "client_name": "Renaud Tissier",
+      "client_email": "r.tissier@modali.com",
+      "report_frequency": "biweekly",
+      "status": "paused",
+      "persona_target": "CMO avec background performance marketing (SEA/Social/CRM). Expérience scaling acquisition D2C. Equipe 15+ personnes. 110-130k€.",
+      "salary_range": "110-130k€",
+      "location": "Bordeaux ou remote"
     }
   ],
   "candidates": [
@@ -39,22 +61,54 @@
     { "id": "cand_002", "name": "Camille Nguyen", "current_title": "VP Sales", "current_company": "Spendesk" },
     { "id": "cand_003", "name": "Antoine Roux", "current_title": "Head of Sales", "current_company": "Qonto" },
     { "id": "cand_004", "name": "Sarah Dumas", "current_title": "Sales Director", "current_company": "Pennylane" },
-    { "id": "cand_005", "name": "Thomas Klein", "current_title": "Engineering Manager", "current_company": "Alan" },
-    { "id": "cand_006", "name": "Marie Leroy", "current_title": "Head of Engineering", "current_company": "Back Market" },
-    { "id": "cand_007", "name": "Pierre Moreau", "current_title": "CTO", "current_company": "SaaS B2B (150p)" },
-    { "id": "cand_008", "name": "Isabelle Garnier", "current_title": "DRH", "current_company": "Michelin" },
-    { "id": "cand_009", "name": "François Martin", "current_title": "DRH Groupe", "current_company": "Decathlon" }
+    { "id": "cand_005", "name": "Nicolas Blanc", "current_title": "VP Commercial", "current_company": "Luko" },
+    { "id": "cand_006", "name": "Elodie Mercier", "current_title": "Regional Sales Manager", "current_company": "Adyen" },
+    { "id": "cand_007", "name": "Romain Castillo", "current_title": "Head of Revenue", "current_company": "Payfit" },
+    { "id": "cand_008", "name": "Thomas Klein", "current_title": "Engineering Manager", "current_company": "Alan" },
+    { "id": "cand_009", "name": "Marie Leroy", "current_title": "Head of Engineering", "current_company": "Back Market" },
+    { "id": "cand_010", "name": "Pierre Moreau", "current_title": "CTO", "current_company": "SaaS B2B (150p)" },
+    { "id": "cand_011", "name": "Laura Bernard", "current_title": "VP Engineering", "current_company": "Doctolib" },
+    { "id": "cand_012", "name": "Alexis Fontaine", "current_title": "Head of Platform", "current_company": "Mirakl" },
+    { "id": "cand_013", "name": "Isabelle Garnier", "current_title": "DRH", "current_company": "Michelin" },
+    { "id": "cand_014", "name": "François Martin", "current_title": "DRH Groupe", "current_company": "Decathlon" },
+    { "id": "cand_015", "name": "Christine Vidal", "current_title": "Directrice des Ressources Humaines", "current_company": "Saint-Gobain" },
+    { "id": "cand_016", "name": "Bertrand Lepage", "current_title": "HR Director", "current_company": "Airbus" },
+    { "id": "cand_017", "name": "Nathalie Simon", "current_title": "DRH France", "current_company": "ArcelorMittal" },
+    { "id": "cand_018", "name": "Olivier Dubois", "current_title": "CFO", "current_company": "Contentsquare" },
+    { "id": "cand_019", "name": "Mathilde Perrin", "current_title": "DAF", "current_company": "Swile" },
+    { "id": "cand_020", "name": "Vincent Marchal", "current_title": "VP Finance", "current_company": "Lydia" },
+    { "id": "cand_021", "name": "Claire Aubert", "current_title": "Finance Director", "current_company": "Welcome to the Jungle" },
+    { "id": "cand_022", "name": "Damien Renaud", "current_title": "CMO", "current_company": "Vestiaire Collective" },
+    { "id": "cand_023", "name": "Lucie Gauthier", "current_title": "VP Marketing", "current_company": "ManoMano" },
+    { "id": "cand_024", "name": "Kevin Barbier", "current_title": "Chief Marketing Officer", "current_company": "Showroomprivé" },
+    { "id": "cand_025", "name": "Aurélie Gros", "current_title": "Head of Growth", "current_company": "Vinted (ex)" }
   ],
   "pipeline": [
     { "mission_id": "mission_001", "candidate_id": "cand_001", "stage": "E2" },
     { "mission_id": "mission_001", "candidate_id": "cand_002", "stage": "Presented" },
     { "mission_id": "mission_001", "candidate_id": "cand_003", "stage": "Qualified" },
     { "mission_id": "mission_001", "candidate_id": "cand_004", "stage": "Rejected" },
-    { "mission_id": "mission_002", "candidate_id": "cand_005", "stage": "Call Done" },
-    { "mission_id": "mission_002", "candidate_id": "cand_006", "stage": "Presented" },
-    { "mission_id": "mission_002", "candidate_id": "cand_007", "stage": "Qualified" },
-    { "mission_id": "mission_003", "candidate_id": "cand_008", "stage": "Contacted" },
-    { "mission_id": "mission_003", "candidate_id": "cand_009", "stage": "Sourced" }
+    { "mission_id": "mission_001", "candidate_id": "cand_005", "stage": "Call Done" },
+    { "mission_id": "mission_001", "candidate_id": "cand_006", "stage": "Responded" },
+    { "mission_id": "mission_001", "candidate_id": "cand_007", "stage": "Contacted" },
+    { "mission_id": "mission_002", "candidate_id": "cand_008", "stage": "E1" },
+    { "mission_id": "mission_002", "candidate_id": "cand_009", "stage": "Presented" },
+    { "mission_id": "mission_002", "candidate_id": "cand_010", "stage": "Qualified" },
+    { "mission_id": "mission_002", "candidate_id": "cand_011", "stage": "E3" },
+    { "mission_id": "mission_002", "candidate_id": "cand_012", "stage": "Call Done" },
+    { "mission_id": "mission_003", "candidate_id": "cand_013", "stage": "Contacted" },
+    { "mission_id": "mission_003", "candidate_id": "cand_014", "stage": "Sourced" },
+    { "mission_id": "mission_003", "candidate_id": "cand_015", "stage": "Responded" },
+    { "mission_id": "mission_003", "candidate_id": "cand_016", "stage": "Call Done" },
+    { "mission_id": "mission_003", "candidate_id": "cand_017", "stage": "Qualified" },
+    { "mission_id": "mission_004", "candidate_id": "cand_018", "stage": "Offer" },
+    { "mission_id": "mission_004", "candidate_id": "cand_019", "stage": "E2" },
+    { "mission_id": "mission_004", "candidate_id": "cand_020", "stage": "Presented" },
+    { "mission_id": "mission_004", "candidate_id": "cand_021", "stage": "Rejected" },
+    { "mission_id": "mission_005", "candidate_id": "cand_022", "stage": "Sourced" },
+    { "mission_id": "mission_005", "candidate_id": "cand_023", "stage": "Contacted" },
+    { "mission_id": "mission_005", "candidate_id": "cand_024", "stage": "Sourced" },
+    { "mission_id": "mission_005", "candidate_id": "cand_025", "stage": "Responded" }
   ],
   "qualifications": [
     {
@@ -62,14 +116,90 @@
       "mission_id": "mission_001",
       "interview_date": "2025-03-14",
       "raw_transcript": "Julien, parle-moi de ton parcours chez Stripe. J'ai passé 4 ans comme Director of Sales EMEA. J'ai monté l'équipe de 8 à 24 commerciaux, on a triplé le ARR sur la région. Ce qui m'a le plus appris c'est gérer des cycles de vente très longs avec des grandes banques — BNP, Société Générale — où il faut convaincre à la fois les équipes tech et les comités de direction. Côté rémunération, je suis à 145k fixe + 40k variable. Je cherche autour de 155-165k fixe pour un poste de VP. Disponible dans 3 mois, basé à Paris.",
-      "cr_source": "ai"
+      "ai_generated_cr": "{\"summary\": \"Profil senior très solide, 4 ans Director EMEA chez Stripe. A scalé l'équipe de 8 à 24, triplé ARR. Cycles de vente enterprise maîtrisés (BNP, SG). Légèrement au-dessus de la fourchette haute (165k demandé vs 160k max).\", \"strengths\": [\"Scale équipe commerciale prouvée\", \"Expérience vente aux banques systémiques\", \"Leadership visible — management multi-pays\"], \"weaknesses\": [\"Prétentions légèrement hors fourchette\", \"Pas d'expérience CEO/cofondateur\"], \"recommendation\": \"go\", \"extracted\": {\"salary_current\": 185, \"salary_target\": 165, \"availability_weeks\": 12, \"nb_direct_reports\": 24}}",
+      "ai_suggested_score": 4.5,
+      "consultant_final_score": 4,
+      "cr_source": "ai",
+      "consultant_edited": true
     },
     {
-      "candidate_id": "cand_006",
+      "candidate_id": "cand_002",
+      "mission_id": "mission_001",
+      "interview_date": "2025-03-18",
+      "raw_transcript": "Camille, tu étais VP Sales chez Spendesk pendant combien de temps ? 3 ans. J'ai pris le poste quand on était 120 personnes, on est montés à 450. J'ai construit tout le segment enterprise depuis zéro — deals à 200k-500k ARR avec des grands comptes. Avant ça j'étais chez Salesforce pendant 6 ans côté account executive grand comptes. Je maîtrise très bien les cycles de décision complexes. Je cherche 150k fixe, je suis dispo dans 6 semaines. Je préfère Paris.",
+      "ai_generated_cr": "{\"summary\": \"VP Sales confirmée, 3 ans chez Spendesk en hypercroissance (120→450p). A construit le segment enterprise from scratch. Background Salesforce solide. Dans la fourchette. Dispo rapide.\", \"strengths\": [\"Construction segment enterprise from scratch\", \"Expérience hypercroissance éprouvée\", \"Connaissance Salesforce (culture de vente rigoureuse)\"], \"weaknesses\": [\"Jamais managé une équipe > 15 personnes\", \"Moins d'expérience fintech pure\"], \"recommendation\": \"go\", \"extracted\": {\"salary_current\": 145, \"salary_target\": 150, \"availability_weeks\": 6, \"nb_direct_reports\": 12}}",
+      "ai_suggested_score": 4,
+      "consultant_final_score": 4,
+      "cr_source": "ai",
+      "consultant_edited": false
+    },
+    {
+      "candidate_id": "cand_009",
       "mission_id": "mission_002",
       "interview_date": "2025-03-17",
       "raw_transcript": "Marie, comment tu décrirais ton style de management ? Je suis très orientée outcomes. J'ai 22 ingénieurs chez Back Market répartis en 4 squads. Ma priorité c'est créer les conditions pour que les équipes livrent — beaucoup de travail sur les processus et l'élimination des blocages. Je code encore environ 20% de mon temps pour garder la crédibilité technique. On est full AWS, stack microservices, j'ai piloté la migration vers une archi event-driven l'an dernier. Je cherche entre 130-140k. Dispo dans 2 mois.",
-      "cr_source": "ai"
+      "ai_generated_cr": "{\"summary\": \"Head of Engineering chez Back Market, 22 ingénieurs, 4 squads. Profil tech-manager équilibré. A piloté migration event-driven AWS. Outcomes-driven. Dans la fourchette.\", \"strengths\": [\"Gestion squads autonomes éprouvée\", \"Crédibilité technique maintenue (code 20%)\", \"Migration archi complexe menée\"], \"weaknesses\": [\"Equipe taille max 22 — mission cible potentiellement plus grande\", \"Pas d'expérience SaaS B2B pur\"], \"recommendation\": \"go\", \"extracted\": {\"salary_current\": 125, \"salary_target\": 135, \"availability_weeks\": 8, \"nb_direct_reports\": 22}}",
+      "ai_suggested_score": 4,
+      "consultant_final_score": 4,
+      "cr_source": "ai",
+      "consultant_edited": false
+    },
+    {
+      "candidate_id": "cand_011",
+      "mission_id": "mission_002",
+      "interview_date": "2025-03-20",
+      "raw_transcript": "Laura, tu manages combien de personnes chez Doctolib ? 35 ingénieurs directs, 4 managers intermédiaires. J'ai rejoint quand on était 80 devs, on est maintenant 180 côté engineering. J'ai mis en place la roadmap, les OKRs tech, et la politique de recrutement. Je suis à 155k actuellement. Pour un poste HoE je serais autour de 140-145k — c'est un changement de scope volontaire, je veux me rapprocher du code et des équipes produit. Je suis dispo dans 1 mois.",
+      "ai_generated_cr": "{\"summary\": \"VP Engineering chez Doctolib, 35 directs + 180 devs au total. Downshift volontaire vers Head of Eng — motivation solide (rapprochement équipes). Profil scaling exceptionnellement bien qualifié. Budget dans la fourchette.\", \"strengths\": [\"Scaling engineering de 80 à 180 devs\", \"OKRs tech et roadmap à l'échelle\", \"Motivation authentique pour le poste\"], \"weaknesses\": [\"Over-qualified — risque de s'ennuyer à 6 mois\", \"Période de transition possible si offre VP ailleurs\"], \"recommendation\": \"go\", \"extracted\": {\"salary_current\": 155, \"salary_target\": 142, \"availability_weeks\": 4, \"nb_direct_reports\": 35}}",
+      "ai_suggested_score": 4.5,
+      "consultant_final_score": 5,
+      "cr_source": "ai",
+      "consultant_edited": true
+    },
+    {
+      "candidate_id": "cand_017",
+      "mission_id": "mission_003",
+      "interview_date": "2025-03-19",
+      "raw_transcript": "Nathalie, parle-moi de la restructuration que tu as menée chez ArcelorMittal. On avait un plan social sur un site de 600 personnes suite à une fermeture partielle. J'ai négocié avec 3 syndicats pendant 8 mois — CFDT, CGT, FO. On a abouti à un accord de transition professionnelle avec 0 contentieux. C'était dur mais j'en suis fière. J'ai 20 ans d'expérience en industrie lourde. Mes prétentions sont 105k, je préfère rester dans le Nord. Disponible rapidement.",
+      "ai_generated_cr": "{\"summary\": \"DRH France ArcelorMittal, 20 ans industrie lourde. A mené plan social 600p avec 3 syndicats, 0 contentieux. Profil de référence pour la mission ETI industrielle.\", \"strengths\": [\"Négociation syndicale multi-organisations\", \"Gestion de crise sociale à grande échelle\", \"Ancrage régional (Nord) parfait pour la mission\"], \"weaknesses\": [\"Profil grand groupe — adaptation ETI à valider\", \"Prétentions au plafond de la fourchette\"], \"recommendation\": \"go\", \"extracted\": {\"salary_current\": 98, \"salary_target\": 105, \"availability_weeks\": 2, \"nb_direct_reports\": 8}}",
+      "ai_suggested_score": 4.5,
+      "consultant_final_score": 4.5,
+      "cr_source": "ai",
+      "consultant_edited": false
+    },
+    {
+      "candidate_id": "cand_018",
+      "mission_id": "mission_004",
+      "interview_date": "2025-03-21",
+      "raw_transcript": "Olivier, tu as participé à la levée de fonds Series C chez Contentsquare ? Oui, j'ai co-piloté le process avec les founders — 500M$ en 2022. J'ai géré les due diligences financières, les relations avec les LPs, et la construction du modèle de projection sur 5 ans. Depuis je dirige une équipe finance de 12 personnes. Je maîtrise les normes US GAAP et IFRS. Je suis à 160k fixe, je cherche 145-155k pour un projet avec plus d'equity. Disponible dans 2 mois.",
+      "ai_generated_cr": "{\"summary\": \"CFO Contentsquare, a co-piloté Series C 500M$. Equipe finance 12p. Profil rare — sait parler aux investisseurs ET aux opérations. Prétentions dans la fourchette si equity.\", \"strengths\": [\"Levée de fonds majeure pilotée\", \"Double compétence GAAP/IFRS\", \"Leadership finance éprouvé\"], \"weaknesses\": [\"Coût plus élevé que fourchette si pas d'equity\", \"Habitué aux très grandes structures\"], \"recommendation\": \"go\", \"extracted\": {\"salary_current\": 160, \"salary_target\": 150, \"availability_weeks\": 8, \"nb_direct_reports\": 12}}",
+      "ai_suggested_score": 5,
+      "consultant_final_score": 5,
+      "cr_source": "ai",
+      "consultant_edited": false
+    }
+  ],
+  "consultants": [
+    {"id": "cons_001", "name": "Adrien Gaignebet", "email": "a.gaignebet@sonnar.io", "slack_user_id": "U04AG001"},
+    {"id": "cons_002", "name": "Claire Fontaine", "email": "c.fontaine@sonnar.io", "slack_user_id": "U04CF002"},
+    {"id": "cons_003", "name": "Thomas Beaumont", "email": "t.beaumont@sonnar.io", "slack_user_id": "U04TB003"},
+    {"id": "cons_004", "name": "Julie Marchais", "email": "j.marchais@sonnar.io", "slack_user_id": "U04JM004"}
+  ],
+  "report_log": [
+    {
+      "mission_id": "mission_001",
+      "sent_at": "2025-03-17",
+      "week_label": "Semaine du 10 mars 2025",
+      "report_content": "Bonjour Sophie,\n\nVoici votre point hebdomadaire sur la mission VP Sales.\n\n**Cette semaine :**\n- 2 nouveaux entretiens de qualification (Julien Favre, Camille Nguyen)\n- Julien Favre présenté en shortlist — profil E2 en cours\n- 1 profil rejeté (prétentions hors marché)\n\n**Pipeline actuel :** 7 candidats\n- E2 : 1 | Presented : 1 | Qualified : 1 | Call Done : 1 | Responded : 1 | Contacted : 1 | Rejected : 1\n\n**Prochaines étapes :** Entretien client avec Julien Favre semaine prochaine si vous confirmez.",
+      "kpi_snapshot": "{\"nb_sourced\": 0, \"nb_contacted\": 1, \"nb_responded\": 1, \"nb_call_done\": 1, \"nb_qualified\": 1, \"nb_presented\": 1, \"nb_e1\": 0, \"nb_e2\": 1, \"nb_rejected\": 1}",
+      "consultant_edited": true
+    },
+    {
+      "mission_id": "mission_002",
+      "sent_at": "2025-03-17",
+      "week_label": "Semaine du 10 mars 2025",
+      "report_content": "Bonjour Marc,\n\nVoici votre point hebdomadaire sur la mission Head of Engineering.\n\n**Cette semaine :**\n- 2 entretiens de qualification réalisés (Marie Leroy, Laura Bernard)\n- Laura Bernard en E3 — profil exceptionnel, recommandation forte\n- Pipeline solide avec 5 candidats actifs\n\n**Pipeline actuel :** 5 candidats\n- E3 : 1 | E1 : 1 | Presented : 1 | Qualified : 1 | Call Done : 1\n\n**Prochaines étapes :** Nous recommandons de rencontrer Laura Bernard en priorité.",
+      "kpi_snapshot": "{\"nb_sourced\": 0, \"nb_contacted\": 0, \"nb_responded\": 0, \"nb_call_done\": 1, \"nb_qualified\": 1, \"nb_presented\": 1, \"nb_e1\": 1, \"nb_e3\": 1}",
+      "consultant_edited": false
     }
   ]
 }
