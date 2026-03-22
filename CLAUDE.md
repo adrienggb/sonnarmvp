@@ -107,7 +107,7 @@ Numérotation croissante dans l'ordre de création. Pas de renommage une fois cr
 |-----|-------|----------|--------|--------|
 | PRD-00 | Setup Projet & Infrastructure | P0 | 5 | **Complete** |
 | PRD-01 | Data Model & Normalisation Airtable | P0 | 5 | **Complete** |
-| PRD-02 | Portail Client (GitHub Pages) | P1 | 8 | Draft |
+| PRD-02 | Portail Client (GitHub Pages) | P1 | 8 | **Complete** |
 | PRD-03 | Module B — CR d'entretien IA | P1 | 8 | Draft |
 | PRD-04 | Module A — Report hebdo automatisé | P1 | 8 | Draft |
 

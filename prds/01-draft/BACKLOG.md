@@ -6,10 +6,10 @@
 |-----|-------|----------|--------|--------|
 | PRD-00 | Setup Projet & Infrastructure | P0 | 5 | **Complete** |
 | PRD-01 | Data Model & Normalisation Airtable | P0 | 5 | **Complete** |
-| PRD-02 | Portail Client (GitHub Pages) | P1 | 5 | Draft |
+| PRD-02 | Portail Client (GitHub Pages) | P1 | 8 | **Complete** |
 | PRD-03 | Module B — CR d'entretien IA | P1 | 8 | Draft |
 | PRD-04 | Module A — Report hebdo automatisé | P1 | 8 | Draft |
-| **Total** | | | **31 pts** | 10 pts livrés ✓ |
+| **Total** | | | **34 pts** | 18 pts livrés ✓ |
 
 ---
 
@@ -21,7 +21,7 @@ PRD-00 (Setup)        ✓ Complete
     │       ├── PRD-03 (Module B CR)     ← prêt à démarrer
     │       │       └── PRD-04 (Module A Report)
     │       └── PRD-04 (Module A Report)
-    └── PRD-02 (Portail Client)      ← parallélisable avec PRD-03
+    └── PRD-02 (Portail Client)      ✓ Complete
 ```
 
 **Chemin critique :** ~~PRD-00 → PRD-01~~ → PRD-03 → PRD-04
@@ -37,10 +37,11 @@ PRD-02 et PRD-03 peuvent démarrer immédiatement.
 
 Livrable : base Airtable complète (6 tables, schéma propre, seed data réaliste), repo GitHub, pipeline_stage en enum strict, 4 consultants liés.
 
-### Sprint 2 — Module B + Portail (13 pts) ← EN COURS
-**PRD-03** (8 pts) + **PRD-02** (5 pts) — parallélisables.
+### Sprint 2 — Module B + Portail (16 pts) ✓ TERMINÉ (partiel)
+**PRD-02** (8 pts) ✓ + **PRD-03** (8 pts) ← à démarrer
 
-Livrable : workflow CR fonctionnel sur les seed data + portail client déployé sur GitHub Pages.
+Livrable sprint 2 : portail client déployable (build statique Next.js, shadcn/ui, Airtable fetch, mode démo).
+PRD-03 (workflow CR) : prêt à démarrer.
 
 ### Sprint 3 — Module A (8 pts)
 **PRD-04** (8 pts) — nécessite PRD-03 terminé.

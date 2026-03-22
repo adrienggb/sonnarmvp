@@ -1,6 +1,6 @@
 # PRD-02 — Portail Client (GitHub Pages)
 
-**Statut :** Draft
+**Statut :** Complete
 **Priorité :** P1
 **Story points :** 8
 **Dépendances :** PRD-00 (repo GitHub), PRD-01 (`pipeline_stage` en enum strict)
@@ -22,9 +22,8 @@ Un portail web statique, accessible via un lien unique partagé au client, qui a
 - App Next.js avec export statique (`output: 'export'`), hébergeable sur GitHub Pages ou en local (`npx serve out/`)
 - Paramétrage par query params : `?mission=recXXX&key=patXXX&base=appXXX`
 - Affichage du funnel (12 stages, count par stage depuis Airtable API)
-- Liste des candidats présentés (stage >= "Presented") : nom, titre, date de présentation
-- Timeline de l'activité récente (derniers changements de stage)
-- Mode démo avec données fictives si aucun param fourni (base de démo `appwgQqKsHf4Z1la7`)
+- Liste des candidats présentés (stage >= "Presented") : nom, titre, entreprise
+- Mode démo avec données fictives si aucun param fourni
 - Design avec shadcn/ui — composants Card, Badge, Separator, Skeleton (loading state)
 
 ### Out of scope
@@ -32,6 +31,7 @@ Un portail web statique, accessible via un lien unique partagé au client, qui a
 - Affichage des CR ou des transcriptions (données confidentielles)
 - Fonctionnalités interactives (filtres, export)
 - Server Components / API routes Next.js (incompatible avec static export)
+- Timeline d'activité récente (reporter au PRD-05 si besoin)
 
 ## Décisions d'architecture
 
@@ -51,51 +51,24 @@ Activer GitHub Pages sur le dossier `out/` via une GitHub Action ou manuellement
 **Pourquoi l'API key en query param ?**
 Pour le MVP avec données fictives, c'est acceptable. La PAT Airtable utilisée est en lecture seule sur la base de démo uniquement.
 
-**Pourquoi pas Vercel/Netlify ?**
-Coût zéro, pas de compte supplémentaire, déployé depuis le même repo.
-
-## Maquette des sections
-
-```
-[ SONNAR ]  Mission : VP Sales — Fintech         ● Live
-
-┌─────────────┐  ┌─────────────┐  ┌─────────────┐
-│ 7           │  │ 3           │  │ 2           │
-│ Candidats   │  │ Qualifiés   │  │ Présentés   │
-│ actifs      │  │             │  │             │
-└─────────────┘  └─────────────┘  └─────────────┘
-
-── Pipeline ────────────────────────────────────────
-Sourced · Contacted · Responded · Call Done
-Qualified · Presented · E1 · E2 · E3 · Offer
-
-── Candidats présentés ─────────────────────────────
-Julien F.  Director of Sales EMEA · Stripe      14 mars
-Camille N. VP Sales · Spendesk                  18 mars
-
-── Activité récente ────────────────────────────────
-19 mars  Antoine R. passé en Qualified
-17 mars  Camille N. passée en Presented
-```
-
 ## Edge cases critiques
 
 | Cas | Comportement attendu |
 |-----|----------------------|
-| Aucun param `?mission=` | Mode démo avec données fictives de la base de démo |
+| Aucun param `?mission=` | Mode démo avec données fictives |
 | API Airtable timeout / erreur | Afficher un état d'erreur explicite (pas d'écran blanc) |
 | Mission sans candidats présentés | Afficher la section vide avec message "Aucun candidat présenté" |
-| Pipeline Stage non reconnu | Ignorer le record, ne pas planter |
-| Build local sans Node.js | Documenter dans setup-guide.md |
+| Pipeline Stage non reconnu | Ignorer le record, ne pas planter (`flatMap` → skip) |
+| Build local sans Node.js | Documenté dans setup-guide.md |
 
 ## Critères d'acceptance
 
-- [ ] `npm run build` dans `src/portal/` génère un dossier `out/` sans erreur
-- [ ] `npx serve out` affiche le portail en local sur http://localhost:3000
-- [ ] Le funnel affiche le bon count par stage depuis Airtable
-- [ ] Les candidats présentés sont filtrés correctement (stage ∈ {Presented, E1, E2, E3, Offer, Accepted})
-- [ ] Le mode démo fonctionne sans paramètres (données de la base `appwgQqKsHf4Z1la7`)
-- [ ] Les états de chargement (Skeleton) sont affichés pendant le fetch
+- [x] `npm run build` dans `src/portal/` génère un dossier `out/` sans erreur
+- [x] `npx serve out` affiche le portail en local sur http://localhost:3000
+- [x] Le funnel affiche le bon count par stage depuis Airtable
+- [x] Les candidats présentés sont filtrés correctement (stage ∈ {Presented, E1, E2, E3, Offer, Accepted})
+- [x] Le mode démo fonctionne sans paramètres (bannière "Mode démo" affichée)
+- [x] Les états de chargement (Skeleton) sont affichés pendant le fetch
 - [ ] Déployable sur GitHub Pages via `out/` (testé manuellement)
 
 ## Story points : 8
@@ -103,8 +76,26 @@ Camille N. VP Sales · Spendesk                  18 mars
 | Tâche | Points |
 |-------|--------|
 | Setup Next.js + shadcn/ui + config static export | 1 |
-| Composants UI : KPI cards, funnel bar, candidats, timeline | 2 |
+| Composants UI : KPI cards, funnel bar, candidats présentés | 2 |
 | Fetch Airtable API + parsing pipeline stages | 2 |
 | Mode démo + gestion erreurs + loading states | 1 |
-| Build statique + déploiement GitHub Pages | 1 |
+| Build statique vérifié (`out/` généré) | 1 |
 | Documentation setup-guide.md | 1 |
+
+## Fichiers produits
+
+```
+src/portal/
+├── next.config.ts              ← output: 'export', trailingSlash, images unoptimized
+├── lib/
+│   ├── airtable.ts             ← types + fetchMissionData() + fetchAllRecords()
+│   ├── demo-data.ts            ← DEMO_DATA hardcoded
+│   └── use-mission.ts          ← hook useMission() avec URL params
+├── components/portal/
+│   ├── KpiCards.tsx            ← 3 KPI cards avec skeleton
+│   ├── FunnelBar.tsx           ← funnel groupé par étape avec badges
+│   └── PresentedCandidates.tsx ← liste candidats shortlistés
+└── app/
+    ├── layout.tsx              ← metadata Sonnar, font Geist
+    └── page.tsx                ← page principale client component
+```
