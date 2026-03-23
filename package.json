@@ -6,7 +6,9 @@
   "scripts": {
     "seed": "node src/airtable/setup-script.js",
     "test:prompt-cr": "node src/scripts/test-prompt-cr.js",
-    "generate:cr": "node src/scripts/generate-cr.js"
+    "generate:cr": "node src/scripts/generate-cr.js",
+    "demo": "node src/scripts/demo-e2e.js",
+    "demo:cleanup": "node src/scripts/demo-e2e.js --cleanup"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

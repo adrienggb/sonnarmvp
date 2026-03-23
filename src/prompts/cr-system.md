@@ -41,7 +41,7 @@ Tu retournes UNIQUEMENT un objet JSON valide, sans texte avant ou après, sans b
 
 ## Règles sur les champs extraits
 
-- `salary_current` et `salary_target` : en k€ (ex: 145 pour 145k€). Si le candidat donne une fourchette, prendre la valeur médiane.
+- `salary_current` et `salary_target` : entier ou décimal en k€ SANS unité (ex: `145` pour 145k€, `160` pour 160k€). JAMAIS de string comme "170k" ou "170k€" — uniquement un nombre JSON pur. Si le candidat donne une fourchette (ex: "165-175k"), prendre la valeur médiane (ex: `170`).
 - `availability_date` : calculer depuis "dans X semaines/mois" à partir de la date d'entretien fournie. Si non mentionné, mettre null.
 - `nb_direct_reports` : nombre de personnes managées en direct (N-1 uniquement, pas l'équipe totale).
 - `data_quality` : mettre "INSUFFISANTE" si la transcription fait moins de 200 mots ou manque plus de 3 champs extraits.
