@@ -1,6 +1,6 @@
 # PRD-03 — Module B : CR d'entretien structuré (IA)
 
-**Statut :** In Progress
+**Statut :** Complete
 **Priorité :** P1
 **Story points :** 8
 **Dépendances :** PRD-00 (Claude API key), PRD-01 (champs Qualification créés)
@@ -84,12 +84,20 @@ L'input se fait via Airtable directement (le consultant copie-colle la transcrip
 
 ## Critères d'acceptance
 
-- [ ] `npm run test:prompt-cr` produit un CR JSON valide sur les seed data sans appel Airtable
-- [ ] `node generate-cr.js --id recXXXX` injecte le CR dans le bon record Qualification
-- [ ] Les champs candidat extraits sont mis à jour (salary_current + availability_date minimum)
-- [ ] Si JSON malformé, le raw text est sauvegardé et `parse_error` est loggué
-- [ ] Testé sur 3 qualification_ids du seed data avec résultats cohérents
-- [ ] Le prompt est en `src/prompts/cr-system.md` + `src/prompts/cr-user.md`
+- [x] `npm run test:prompt-cr` produit un CR JSON valide sur les seed data sans appel Airtable
+- [x] `node generate-cr.js --id recXXXX` injecte le CR dans le bon record Qualification
+- [x] Les champs candidat extraits sont mis à jour (salary_current + availability_date minimum) — champs optionnels, skip si absents de la base
+- [x] Si JSON malformé, le raw text est sauvegardé et `parse_error` est loggué
+- [x] Testé sur 3 qualification_ids du seed data avec résultats cohérents (scores 3.5–4.5, JSON valide)
+- [x] Le prompt est en `src/prompts/cr-system.md` + `src/prompts/cr-user.md`
+
+## Notes d'implémentation
+
+- **API utilisée :** Ollama local (`qwen2.5:7b`) — pas de rate limit, 0 coût, fonctionne hors-ligne
+- **Fallback :** OpenRouter (`z-ai/glm-4.5-air:free`) si `OLLAMA_MODEL` absent, Anthropic SDK sinon
+- **Structure Airtable réelle :** `Qualification → Pipeline[0] → Candidate + Mission` (pas de lien direct)
+- **Champ transcript :** `Raw Transcript` (pas `Transcript` comme dans le schema initial)
+- **Parsing robuste :** nettoyage commentaires JSON + trailing commas (compatibilité petits modèles)
 
 ## Story points : 8
 

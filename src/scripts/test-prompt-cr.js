@@ -22,10 +22,11 @@ const ROOT = path.resolve(__dirname, "../..");
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
-const MODEL = process.env.OPENROUTER_MODEL ?? process.env.CLAUDE_MODEL ?? "nvidia/nemotron-3-super-120b-a12b:free";
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL;
+const MODEL = OLLAMA_MODEL ?? process.env.OPENROUTER_MODEL ?? process.env.CLAUDE_MODEL ?? "z-ai/glm-4.5-air:free";
 
-// Use Anthropic SDK only if no OpenRouter key, otherwise prefer OpenRouter
-const USE_OPENROUTER = !!OPENROUTER_KEY;
+const USE_OLLAMA = !!OLLAMA_MODEL;
+const USE_OPENROUTER = !USE_OLLAMA && !!OPENROUTER_KEY;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -41,7 +42,11 @@ function buildPrompt(template, vars) {
 }
 
 function parseJson(raw) {
-  const cleaned = raw.replace(/^```json\s*/i, "").replace(/\s*```$/, "").trim();
+  let cleaned = raw.replace(/^```json\s*/i, "").replace(/\s*```$/, "").trim();
+  // Supprimer les commentaires JSON (non supportés par JSON.parse)
+  cleaned = cleaned.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
+  // Supprimer les trailing commas avant } ou ]
+  cleaned = cleaned.replace(/,\s*([}\]])/g, "$1");
   return JSON.parse(cleaned);
 }
 
@@ -68,6 +73,51 @@ async function callOpenRouter(systemPrompt, userPrompt) {
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`OpenRouter ${res.status}: ${text}`);
+  }
+
+  let rawOutput = "";
+  const decoder = new TextDecoder();
+
+  for await (const chunk of res.body) {
+    const lines = decoder.decode(chunk).split("\n");
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      const data = line.slice(6).trim();
+      if (data === "[DONE]") continue;
+      try {
+        const json = JSON.parse(data);
+        const delta = json.choices?.[0]?.delta?.content;
+        if (delta) {
+          process.stdout.write(delta);
+          rawOutput += delta;
+        }
+      } catch {
+        // ignore malformed SSE lines
+      }
+    }
+  }
+
+  return rawOutput;
+}
+
+async function callOllama(systemPrompt, userPrompt) {
+  const res = await fetch("http://localhost:11434/v1/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 2048,
+      stream: true,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Ollama ${res.status}: ${text}`);
   }
 
   let rawOutput = "";
@@ -139,7 +189,7 @@ async function main() {
     throw new Error(`Candidat ou mission introuvable pour la qualification index ${index}`);
   }
 
-  const apiLabel = USE_OPENROUTER ? `OpenRouter (${MODEL})` : `Anthropic (${MODEL})`;
+  const apiLabel = USE_OLLAMA ? `Ollama local (${MODEL})` : USE_OPENROUTER ? `OpenRouter (${MODEL})` : `Anthropic (${MODEL})`;
 
   console.log("─".repeat(60));
   console.log(`📋 Qualification index ${index} — ${apiLabel}`);
@@ -160,10 +210,13 @@ async function main() {
     transcript: qual.raw_transcript,
   });
 
-  console.log(`⏳ Appel ${USE_OPENROUTER ? "OpenRouter" : "Anthropic"}...\n`);
+  const apiName = USE_OLLAMA ? "Ollama" : USE_OPENROUTER ? "OpenRouter" : "Anthropic";
+  console.log(`⏳ Appel ${apiName}...\n`);
 
   let rawOutput = "";
-  if (USE_OPENROUTER) {
+  if (USE_OLLAMA) {
+    rawOutput = await callOllama(systemPrompt, userPrompt);
+  } else if (USE_OPENROUTER) {
     rawOutput = await callOpenRouter(systemPrompt, userPrompt);
   } else {
     rawOutput = await callAnthropic(systemPrompt, userPrompt);
