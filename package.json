@@ -1,15 +1,15 @@
 {
   "name": "sonnar-automated-reporting",
   "version": "0.1.0",
-  "description": "Automated mission reporting — Airtable + n8n + Claude API",
+  "description": "Automated mission reporting — Airtable + Claude API",
+  "type": "module",
   "scripts": {
     "seed": "node src/airtable/setup-script.js",
-    "test:prompt-cr": "node scripts/test-prompt.js cr",
-    "test:prompt-report": "node scripts/test-prompt.js report"
+    "test:prompt-cr": "node src/scripts/test-prompt-cr.js",
+    "generate:cr": "node src/scripts/generate-cr.js"
   },
   "dependencies": {
-    "airtable": "^0.12.0",
-    "@anthropic-ai/sdk": "^0.24.0",
+    "@anthropic-ai/sdk": "^0.39.0",
     "dotenv": "^16.0.0"
   }
 }
