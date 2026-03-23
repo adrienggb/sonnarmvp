@@ -7,9 +7,9 @@
 | PRD-00 | Setup Projet & Infrastructure | P0 | 5 | **Complete** |
 | PRD-01 | Data Model & Normalisation Airtable | P0 | 5 | **Complete** |
 | PRD-02 | Portail Client (GitHub Pages) | P1 | 8 | **Complete** |
-| PRD-03 | Module B — CR d'entretien IA | P1 | 8 | Draft |
-| PRD-04 | Module A — Report hebdo automatisé | P1 | 8 | Draft |
-| **Total** | | | **34 pts** | 18 pts livrés ✓ |
+| PRD-03 | Module B — CR d'entretien IA | P1 | 8 | **Complete** |
+| PRD-04 | Module A — Report hebdo automatisé | P1 | 8 | **Complete** |
+| **Total** | | | **34 pts** | **34 pts livrés ✓** |
 
 ---
 
@@ -18,46 +18,32 @@
 ```
 PRD-00 (Setup)        ✓ Complete
     ├── PRD-01 (Data Model)          ✓ Complete
-    │       ├── PRD-03 (Module B CR)     ← prêt à démarrer
-    │       │       └── PRD-04 (Module A Report)
+    │       ├── PRD-03 (Module B CR)     ✓ Complete
+    │       │       └── PRD-04 (Module A Report) ✓ Complete
     │       └── PRD-04 (Module A Report)
     └── PRD-02 (Portail Client)      ✓ Complete
 ```
 
-**Chemin critique :** ~~PRD-00 → PRD-01~~ → PRD-03 → PRD-04
-
-PRD-02 et PRD-03 peuvent démarrer immédiatement.
+**Tous les PRDs sont terminés. Projet MVP complet.**
 
 ---
 
-## Séquence recommandée
+## Livrables finaux
 
-### Sprint 1 — Fondations (10 pts) ✓ TERMINÉ
-**PRD-00** (5 pts) + **PRD-01** (5 pts)
+### Module B — CR d'entretien (PRD-03)
+- `src/prompts/cr-system.md` + `cr-user.md`
+- `src/scripts/generate-cr.js` — génère un CR structuré JSON depuis une qualification Airtable
+- `src/scripts/demo-e2e.js` — démo end-to-end reproductible
+- Démo : `npm run demo` / `npm run demo:cleanup`
 
-Livrable : base Airtable complète (6 tables, schéma propre, seed data réaliste), repo GitHub, pipeline_stage en enum strict, 4 consultants liés.
+### Module A — Report hebdo (PRD-04)
+- `src/prompts/report-system.md` + `report-user.md`
+- `src/scripts/generate-report.js` — génère un report hebdo depuis le pipeline Airtable
+- Portail : onglet "Report" affiche le dernier Report_Log (KPI badges + markdown)
+- Usage : `npm run generate:report -- --mission recXXXX`
 
-### Sprint 2 — Module B + Portail (16 pts) ✓ TERMINÉ (partiel)
-**PRD-02** (8 pts) ✓ + **PRD-03** (8 pts) ← à démarrer
-
-Livrable sprint 2 : portail client déployable (build statique Next.js, shadcn/ui, Airtable fetch, mode démo).
-PRD-03 (workflow CR) : prêt à démarrer.
-
-### Sprint 3 — Module A (8 pts)
-**PRD-04** (8 pts) — nécessite PRD-03 terminé.
-
-Livrable : report hebdo généré automatiquement, draft Gmail créé, loggué dans Report_Log.
-
----
-
-## Critères de passage Draft → Ready
-
-Un PRD passe en `02-ready` quand :
-- [ ] Les dépendances amont sont en `04-complete`
-- [ ] Les critères d'acceptance sont validés et non-ambigus
-- [ ] Les edge cases ont été revus
-- [ ] L'estimation en story points est confirmée
-
-Un PRD passe en `03-in-progress` quand :
-- [ ] Il est en tête de sprint
-- [ ] Toutes ses dépendances sont en `04-complete`
+### Portail client (PRD-02)
+- Next.js static export → GitHub Pages
+- Onglet Pipeline : KPI cards, funnel bar, candidats en cours
+- Onglet Report : report hebdo avec KPI badges et markdown
+- URL démo : `https://adrienggb.github.io/SonnarMVP?missionId=rec6RAvzkYERdNS2w`

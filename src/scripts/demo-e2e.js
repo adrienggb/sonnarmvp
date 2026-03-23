@@ -108,7 +108,15 @@ function parseJson(raw) {
   let cleaned = raw.replace(/^```json\s*/i, "").replace(/\s*```$/, "").trim();
   cleaned = cleaned.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
   cleaned = cleaned.replace(/,\s*([}\]])/g, "$1");
-  return JSON.parse(cleaned);
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const fixed = cleaned.replace(
+      /"((?:[^"\\]|\\[\s\S])*)"/g,
+      (_, inner) => `"${inner.replace(/\n/g, "\\n").replace(/\r/g, "\\r")}"`
+    );
+    return JSON.parse(fixed);
+  }
 }
 
 function airtableHeaders() {

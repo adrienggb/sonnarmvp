@@ -42,11 +42,18 @@ function buildPrompt(template, vars) {
 
 function parseJson(raw) {
   let cleaned = raw.replace(/^```json\s*/i, "").replace(/\s*```$/, "").trim();
-  // Supprimer les commentaires JSON (non supportés par JSON.parse)
   cleaned = cleaned.replace(/\/\/[^\n]*/g, "").replace(/\/\*[\s\S]*?\*\//g, "");
-  // Supprimer les trailing commas avant } ou ]
   cleaned = cleaned.replace(/,\s*([}\]])/g, "$1");
-  return JSON.parse(cleaned);
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    // Small models sometimes emit literal newlines inside JSON strings.
+    const fixed = cleaned.replace(
+      /"((?:[^"\\]|\\[\s\S])*)"/g,
+      (_, inner) => `"${inner.replace(/\n/g, "\\n").replace(/\r/g, "\\r")}"`
+    );
+    return JSON.parse(fixed);
+  }
 }
 
 function airtableHeaders() {

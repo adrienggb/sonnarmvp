@@ -72,6 +72,14 @@ export interface MissionData {
   presentedCount: number;
 }
 
+export interface ReportLog {
+  id: string;
+  weekLabel: string;
+  sentAt: string;
+  reportContent: string;
+  kpiSnapshot: Record<string, number> | null;
+}
+
 // --- Airtable fetch helpers ---
 
 interface AirtableRecord<T> {
@@ -228,5 +236,43 @@ export async function fetchMissionData(
     activeCount,
     qualifiedCount,
     presentedCount: presented.length,
+  };
+}
+
+export async function fetchLatestReport(
+  baseId: string,
+  apiKey: string,
+  missionId: string
+): Promise<ReportLog | null> {
+  const records = await fetchAllRecords<Record<string, unknown>>(
+    baseId,
+    apiKey,
+    "Report_Log",
+    new URLSearchParams({
+      filterByFormula: `{Mission}="${missionId}"`,
+      sort: JSON.stringify([{ field: "Sent At", direction: "desc" }]),
+      maxRecords: "1",
+    }).toString()
+  );
+
+  if (records.length === 0) return null;
+
+  const r = records[0];
+  let kpiSnapshot: Record<string, number> | null = null;
+  const raw = r.fields["KPI Snapshot"];
+  if (typeof raw === "string") {
+    try {
+      kpiSnapshot = JSON.parse(raw);
+    } catch {
+      kpiSnapshot = null;
+    }
+  }
+
+  return {
+    id: r.id,
+    weekLabel: (r.fields["Week Label"] as string) ?? "",
+    sentAt: (r.fields["Sent At"] as string) ?? "",
+    reportContent: (r.fields["Report Content"] as string) ?? "",
+    kpiSnapshot,
   };
 }

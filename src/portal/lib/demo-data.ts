@@ -1,4 +1,4 @@
-import type { MissionData } from "./airtable";
+import type { MissionData, ReportLog } from "./airtable";
 
 export const DEMO_DATA: MissionData = {
   mission: {
@@ -31,4 +31,36 @@ export const DEMO_DATA: MissionData = {
   activeCount: 6,
   qualifiedCount: 4,
   presentedCount: 2,
+};
+
+export const DEMO_REPORT: ReportLog = {
+  id: "demo-report",
+  weekLabel: "Semaine du 17 mars 2025",
+  sentAt: "2025-03-21",
+  kpiSnapshot: {
+    Sourced: 0, Contacted: 1, Responded: 1, "Call Done": 1,
+    Qualified: 1, Presented: 1, E1: 0, E2: 1, E3: 0,
+    Offer: 0, Accepted: 0, Rejected: 1,
+  },
+  reportContent: `## Avancement cette semaine
+
+La mission VP Sales progresse selon le plan. Deux entretiens de qualification ont été menés cette semaine, portant le nombre de profils qualifiés à 4 au total.
+
+## Pipeline actuel
+
+- **6 candidats actifs** dans le pipeline
+- **4 qualifiés** dont 2 présentés au client
+- 1 candidat en phase E2 (entretien approfondi Sonnar)
+- 1 rejet suite à désalignement salarial
+
+## Candidats rencontrés
+
+- **Julien Favre** (Director of Sales EMEA, Stripe) : profil senior très aligné — 12 ans de vente SaaS, management de 22 personnes, expérience scale-up en phase de croissance. Recommandation go. Score 4.5/5.
+- **Camille Nguyen** (VP Sales, Spendesk) : profil solide sur le volet équipe et process, plus faible sur la composante technico-commerciale B2B fintech. À revoir selon priorité client.
+
+## Prochaines étapes
+
+- Planification des entretiens client pour Julien Favre la semaine du 24 mars
+- Qualification d'Antoine Roux (Head of Sales, Qonto) en cours de planification
+- Point de cadrage avec vous prévu jeudi 27 mars`,
 };
