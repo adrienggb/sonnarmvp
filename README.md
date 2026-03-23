@@ -34,7 +34,7 @@ node src/scripts/generate-report.js --mission rec6RAvzkYERdNS2w
 cd src/portal && npm run dev   # → http://localhost:3000
 ```
 
-Portail déployé : https://adrienggb.github.io/SonnarMVP?missionId=rec6RAvzkYERdNS2w
+Portail déployé : https://adrienggb.github.io/SonnarMVP/?missionId=rec6RAvzkYERdNS2w
 
 ## Stack & coût
 

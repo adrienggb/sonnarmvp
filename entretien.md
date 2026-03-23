@@ -35,7 +35,7 @@ Tu montres en live :
 
 1. **Airtable** → tables Candidates + Pipeline + Qualifications : les 3 enregistrements sont là
 2. **Portail local** : http://localhost:3004 → onglet Pipeline → candidat visible
-3. **Portail GitHub Pages** : https://adrienggb.github.io/SonnarMVP?missionId=rec6RAvzkYERdNS2w
+3. **Portail GitHub Pages** : https://adrienggb.github.io/SonnarMVP/?missionId=rec6RAvzkYERdNS2w
 
 ### Après la démo
 
